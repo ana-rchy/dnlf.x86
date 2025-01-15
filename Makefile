@@ -1,15 +1,15 @@
 .POSIX:
 .SUFFIXES:
-
 CC=gcc
 
 run: main
-	./main
+	./output/main
+
 
 main: main.c
-	$(CC) main.c -I include -L lib -lraylib -lm -o main
+	$(CC) main.c lib/*.c -l raylib -o output/main
 
 clean:
-	rm -f main
+	rm -f output/main
 
 .PHONY: run clean
