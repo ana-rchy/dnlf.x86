@@ -20,3 +20,5 @@
 #define DITHER_1 'j'
 #define DITHER_2 'k'
 #define DITHER_3 'l'
+
+#define max(a,b) ( ((a) > (b)) ? (a) : (b) )

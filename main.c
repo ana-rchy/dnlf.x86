@@ -7,13 +7,14 @@
 int main() {
     setup_renderer();
 
-    Font font = LoadFont("font.png");
-    
     setup_level();
 
-    while (!WindowShouldClose()) {
-        setup_screen();
+    generate_next_screen(0);
 
+    while (!WindowShouldClose()) {
+        refresh_screen();
+
+        draw_level_to_screen();
         draw_screen();
     }
 

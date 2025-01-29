@@ -10,7 +10,7 @@ void setup_renderer() {
     font = LoadFont("font.png");
 }
 
-void setup_screen() {
+void refresh_screen() {
     BeginDrawing();
     ClearBackground(RAYWHITE);
 }
