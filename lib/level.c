@@ -49,7 +49,9 @@ void generate_next_screen(int stage) {
         // rectangle absolute x/y pos
         int rect_abs_x_pos = rand() % (GRID_X - rect_width);
         int rect_abs_y_pos = rand() % (GRID_Y - rect_height);
-
+        
+        // assumes a block starting from 0, 0
+        // before actually putting it in the correct position in the new screen
         for (int x = 0; x < rect_width; x++) {
             for (int y = 0; y < rect_height; y++) {
                 // edges will be full blocks, the inside is textured with non-full blocks
