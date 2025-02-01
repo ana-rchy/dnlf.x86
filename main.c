@@ -1,10 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <raylib.h>
 #include "lib/defines.h"
 #include "lib/renderer.h"
 #include "lib/level.h"
 
 int main() {
+    srand(time(NULL));
+
     setup_renderer();
 
     setup_level();
