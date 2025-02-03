@@ -6,13 +6,7 @@ char screen[GRID_X][GRID_Y] = {};
 static Font font;
 
 void setup_renderer() {
-    InitWindow(SCREEN_X, SCREEN_Y, "DO NOT LOSE FOCUS.x86");
     font = LoadFont("font.png");
-}
-
-void refresh_screen() {
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
 }
 
 void draw_char(char c, int x, int y) {
@@ -21,7 +15,14 @@ void draw_char(char c, int x, int y) {
         return;
     }
 
-    screen[x][y] = c;
+    Vector2 pos = { x * UNIT_X, y * UNIT_Y };
+            
+    // guarantee a string with a single char in it,
+    // in an array it might be interpreted differently
+    char chr[2];
+    sprintf(chr, "%c", c);
+
+    DrawTextEx(font, chr, pos, 12, 0, BLACK);
 }
 
 void draw_screen() {
@@ -37,6 +38,4 @@ void draw_screen() {
             DrawTextEx(font, chr, pos, 12, 0, BLACK);
         }
     }
-
-    EndDrawing();
 }

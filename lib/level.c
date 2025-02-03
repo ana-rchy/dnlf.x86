@@ -1,30 +1,26 @@
 #include <stdlib.h>
-#include <math.h>
 #include "level.h"
 #include "defines.h"
 #include "renderer.h"
 
-char level[GRID_X * 2][GRID_Y];
+// 'char (*foreground)[GRID_Y]' means you can pass in a 2d array
+void draw_level_to_screen(char (*foreground)[GRID_Y]) {
+    // TODO: verify length of x array
 
-void setup_level() {
     for (int x = 0; x < GRID_X; x++) {
         for (int y = 0; y < GRID_Y; y++) {
-            level[x][y] = T_LINE;
-        }
-    }
-}
-
-void draw_level_to_screen() {
-    for (int x = 0; x < GRID_X; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
-            draw_char(level[x][y], x, y);
+            draw_char(foreground[x][y], x, y);
        }
     }
 }
 
 // reimplementation of the 'geometry' function
-void generate_next_screen(int stage) {
-    char new_screen[GRID_X][GRID_Y];
+char** generate_screen(int stage) {
+    // idk why this syntax works but sure
+    char** new_screen = malloc(GRID_X * sizeof(char*));
+    for (int x = 0; x < GRID_X; x++) {
+        new_screen[x] = malloc(GRID_Y * sizeof(char));
+    }
 
     for (int x = 0; x < GRID_X; x++) {
         for (int y = 0; y < GRID_Y; y++) {
@@ -86,7 +82,7 @@ void generate_next_screen(int stage) {
         int rect_width = rand() % (GRID_X / 3);
         int rect_height;
         int rect_abs_x_pos = rand() % (GRID_X - rect_width);
-        int on_ceiling = rand() % 2;
+        bool on_ceiling = rand() % 2;
         
         // stage 0-3 = 4 tall edge blocks, 4-7 = 3, ..., >= 16 = 0 tall blocks
         //
@@ -121,7 +117,6 @@ void generate_next_screen(int stage) {
                     int edge_width = rand() % 5;
                     int edge_height = rand() % 5;
 
-                    // NOTE: the y part is different in the OG because the y for loop got reversed, but its probs fine like this too
                     if ( (x <= edge_width || x >= rect_width - edge_width - 1) ||
                          (y >= GRID_Y - edge_height - 1 || y <= GRID_Y - rect_height + edge_height) )
                     {
@@ -136,11 +131,33 @@ void generate_next_screen(int stage) {
         }
     }
 
+    return new_screen;
+}
 
+void scroll_level(int distance, char (*foreground)[GRID_Y]) {
+    // TODO: verify length of x array
 
-    for (int x = 0; x < GRID_X; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
-            level[x][y] = new_screen[x][y];
-       }
+    for (int y = 0; y < GRID_Y; y++) {
+        for (int x = 1; x < GRID_X * 2; x++) {
+            foreground[x - 1][y] = foreground[x][y];
+        }
+
+        foreground[GRID_X * 2 - 1][y] = ' ';
     }
+}
+
+bool should_generate_screen(char (*level)[GRID_Y]) {
+    // TODO: verify length of x array
+
+    bool should_generate = true;
+
+    for (int x = GRID_X; x < GRID_X * 2; x++) {
+        for (int y = 0; y < GRID_Y; y++) {
+            if (level[x][y] != ' ') {
+                should_generate = false;
+            }
+        }
+    }
+
+    return should_generate;
 }

@@ -1,7 +1,10 @@
 #pragma once
 
+#include <stdbool.h>
 #include <raylib.h>
+#include "defines.h"
 
-void setup_level();
-void draw_level_to_screen();
-void generate_next_screen(int stage);
+void draw_level_to_screen(char (*foreground)[GRID_Y]);
+char** generate_screen(int stage);
+void scroll_level(int distance, char (*foreground)[GRID_Y]);
+bool should_generate_screen(char (*level)[GRID_Y]);
