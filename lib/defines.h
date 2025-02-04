@@ -22,4 +22,14 @@
 #define DITHER_2 'k'
 #define DITHER_3 'l'
 
+#define MAX_AIR_BLOCKS 6
+#define MIN_AIR_BLOCK_SIZE 2
+#define MAX_AIR_BLOCK_SIZE 8
+
+#define MAX_EDGE_BLOCKS 16
+#define MAX_TALL_EDGE_BLOCKS 4
+#define MIN_SHORT_TALL_BLOCK_DIFFERENCE 15
+
+#define SCROLL_SPEED_ACCELERATION 0.0001
+
 #define max(a,b) ( ((a) > (b)) ? (a) : (b) )

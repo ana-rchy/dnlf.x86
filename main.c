@@ -6,10 +6,7 @@
 
 int main() {
     char foreground[GRID_X * 2][GRID_Y];
-    /*char** foreground = malloc(GRID_X * 2 * sizeof(char*));*/
-    /*for (int x = 0; x < GRID_X; x++) {*/
-    /*    foreground[x] = malloc(GRID_Y * sizeof(char));*/
-    /*}*/
+    float scroll_speed = 1;
 
     InitWindow(SCREEN_X, SCREEN_Y, "DO NOT LOSE FOCUS.x86");
     SetTargetFPS(60);
@@ -33,8 +30,8 @@ int main() {
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
-
-        scroll_level(1, foreground);
+        
+        scroll_level(scroll_speed, foreground);
         
         if (should_generate_screen(foreground)) {
             new_screen = generate_screen(0);
@@ -47,6 +44,7 @@ int main() {
 
         draw_level_to_screen(foreground);
 
+        scroll_speed += SCROLL_SPEED_ACCELERATION;
         EndDrawing();
     }
 

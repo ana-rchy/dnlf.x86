@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include <stdlib.h>
+#include <math.h>
 #include "level.h"
 #include "defines.h"
 #include "renderer.h"
@@ -32,10 +33,6 @@ char** generate_screen(int stage) {
     // each iteration creates an air block
     // decreases by 1 for every 3rd stage after 4
     // e.g. stage 0-6 = 6, 7-9 = 5, 10-12 = 4, etc.
-    #define MAX_AIR_BLOCKS 6
-    #define MIN_AIR_BLOCK_SIZE 2
-    #define MAX_AIR_BLOCK_SIZE 8
-
     int air_blocks_count = MAX_AIR_BLOCKS - (max(stage - 4, 0) / 3);
 
     for (int i = 0; i < air_blocks_count; i++) {
@@ -73,9 +70,6 @@ char** generate_screen(int stage) {
     // each iteration creates a ground/ceiling block
     // decreases by 1 for every 2nd stage
     // e.g. stage 0-1 = 16, 2-3 = 15, 4-5 = 14, etc.
-    #define MAX_EDGE_BLOCKS 16
-    #define MAX_TALL_EDGE_BLOCKS 4
-    #define MIN_SHORT_TALL_BLOCK_DIFFERENCE 15
 
     // used for limiting the amount of tall edge blocks that get generated
     int the_big_one = 0;
@@ -134,15 +128,25 @@ char** generate_screen(int stage) {
     return new_screen;
 }
 
-void scroll_level(int distance, char (*foreground)[GRID_Y]) {
+float distance_overflow = 0;
+void scroll_level(float distance, char (*foreground)[GRID_Y]) {
     // TODO: verify length of x array
+    
+    distance_overflow += fmod(distance, 1);
 
-    for (int y = 0; y < GRID_Y; y++) {
-        for (int x = 1; x < GRID_X * 2; x++) {
-            foreground[x - 1][y] = foreground[x][y];
+    if (distance_overflow >= 1) {
+        distance += (int) distance_overflow;
+        distance_overflow = fmod(distance_overflow, 1);
+    }
+    
+    for (int i = 0; i < (int) distance; i++) {
+        for (int y = 0; y < GRID_Y; y++) {
+            for (int x = 1; x < GRID_X * 2; x++) {
+                foreground[x - 1][y] = foreground[x][y];
+            }
+
+            foreground[GRID_X * 2 - 1][y] = ' ';
         }
-
-        foreground[GRID_X * 2 - 1][y] = ' ';
     }
 }
 
