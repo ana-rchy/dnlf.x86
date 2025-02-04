@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include <raylib.h>
 #include "lib/defines.h"
 #include "lib/renderer.h"
@@ -16,7 +14,6 @@ int main() {
     InitWindow(SCREEN_X, SCREEN_Y, "DO NOT LOSE FOCUS.x86");
     SetTargetFPS(60);
 
-    srand(time(NULL));
     setup_renderer();
 
     char** new_screen = generate_screen(0);
@@ -33,13 +30,7 @@ int main() {
         }
     }
     
-    int m = 0;
     while (!WindowShouldClose()) {
-        m = (m + 1) % 10000;
-        if (m != 0) {
-            continue;
-        }
-
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
@@ -58,6 +49,8 @@ int main() {
 
         EndDrawing();
     }
+
+    CloseWindow();
 
     return 0;
 }

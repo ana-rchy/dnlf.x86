@@ -1,5 +1,6 @@
 #pragma once
 
+#define FRAME_RATE 60
 #define SCREEN_X 1024
 #define SCREEN_Y 576
 #define UNIT_X 8
