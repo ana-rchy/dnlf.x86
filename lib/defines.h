@@ -25,8 +25,23 @@
 #define BG_1_PARALLAX_DIVIDER 2.0
 #define BG_2_PARALLAX_DIVIDER 3.0
 
+// these are actually the default windows terminal colors but yeag
 #define DNLF_WHITE (Color) { 242, 242, 242, 255 }
 #define DNLF_BLACK (Color) { 12, 12, 12, 255 }
+#define DNLF_BLUE (Color) { 0, 55, 218, 255 }
+#define DNLF_GREEN (Color) { 19, 161, 14, 255 }
+#define DNLF_CYAN (Color) { 58, 150, 221, 255 }
+#define DNLF_RED (Color) { 197, 15, 31, 255 }
+#define DNLF_PURPLE (Color) { 136, 23, 152, 255 }
+#define DNLF_YELLOW (Color) { 193, 156, 0, 255 }
+#define DNLF_LIGHT_GRAY (Color) { 204, 204, 204, 255 }
+#define DNLF_DARK_GRAY (Color) { 118, 118, 118, 255 }
+#define DNLF_BRIGHT_BLUE (Color) { 59, 120, 255, 255 }
+#define DNLF_BRIGHT_GREEN (Color) { 22, 198, 12, 255 }
+#define DNLF_BRIGHT_CYAN (Color) { 97, 214, 214, 255 }
+#define DNLF_BRIGHT_RED (Color) { 231, 72, 86, 255 }
+#define DNLF_BRIGHT_PURPLE (Color) { 180, 0, 158, 255 }
+#define DNLF_BRIGHT_YELLOW (Color) { 249, 241, 165, 255 }
 
 #define MAX_AIR_BLOCKS 6
 #define MIN_AIR_BLOCK_SIZE 2

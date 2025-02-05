@@ -6,6 +6,7 @@
 
 char foreground[GRID_X * 2][GRID_Y], background_1[GRID_X * 2][GRID_Y], background_2[GRID_X * 2][GRID_Y];
 float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow = 0;
+
 float scroll_speed = 1;
 
 Color bg_color = DNLF_WHITE;
