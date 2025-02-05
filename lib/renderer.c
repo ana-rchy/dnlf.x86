@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <raylib.h>
 #include "renderer.h"
+#include "defines.h"
 
 Font font;
 
@@ -20,6 +21,7 @@ void draw_char(char c, int x, int y) {
     // in an array it might be interpreted differently
     char chr[2];
     sprintf(chr, "%c", c);
-
+    
+    DrawRectangle(pos.x, pos.y, UNIT_X, UNIT_Y, DNLF_WHITE);
     DrawTextEx(font, chr, pos, 12, 0, BLACK);
 }

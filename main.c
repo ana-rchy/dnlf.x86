@@ -16,11 +16,11 @@ int main() {
 
     setup_layer(FULL_BLOCK, foreground);
     setup_layer(DITHER_1, background_1);
-    setup_layer(DITHER_2, background_2);
+    setup_layer(DITHER_3, background_2);
     
     while (!WindowShouldClose()) {
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground(DNLF_WHITE);
 
         extend_layer_if_needed(FULL_BLOCK, foreground);
         extend_layer_if_needed(DITHER_1, background_1);

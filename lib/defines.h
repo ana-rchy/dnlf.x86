@@ -22,6 +22,8 @@
 #define DITHER_2 'k'
 #define DITHER_3 'l'
 
+#define DNLF_WHITE (Color) { 242, 242, 242, 255 }
+
 #define MAX_AIR_BLOCKS 6
 #define MIN_AIR_BLOCK_SIZE 2
 #define MAX_AIR_BLOCK_SIZE 8

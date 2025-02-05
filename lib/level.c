@@ -4,7 +4,6 @@
 #include "level.h"
 #include "defines.h"
 #include "renderer.h"
-#include <stdio.h>
 
 // 'char (*foreground)[GRID_Y]' means you can pass in a 2d array
 void draw_level_to_screen(char (*foreground)[GRID_Y], char (*background_1)[GRID_Y], char (*background_2)[GRID_Y]) {
@@ -13,18 +12,14 @@ void draw_level_to_screen(char (*foreground)[GRID_Y], char (*background_1)[GRID_
     for (int x = 0; x < GRID_X; x++) {
         for (int y = 0; y < GRID_Y; y++) {
             draw_char(background_2[x][y], x, y);
-       }
-    }
 
-    for (int x = 0; x < GRID_X; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
-            draw_char(background_1[x][y], x, y);
-       }
-    }
+            if (background_1[x][y] != ' ') {
+                draw_char(background_1[x][y], x, y);
+            }
 
-    for (int x = 0; x < GRID_X; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
-            draw_char(foreground[x][y], x, y);
+            if (foreground[x][y] != ' ') {
+                draw_char(foreground[x][y], x, y);
+            }
        }
     }
 }
