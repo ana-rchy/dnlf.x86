@@ -4,11 +4,11 @@
 #include "lib/renderer.h"
 #include "lib/level.h"
 
-int main() {
-    char foreground[GRID_X * 2][GRID_Y], background_1[GRID_X * 2][GRID_Y], background_2[GRID_X * 2][GRID_Y];
-    float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow = 0;
-    float scroll_speed = 1;
+char foreground[GRID_X * 2][GRID_Y], background_1[GRID_X * 2][GRID_Y], background_2[GRID_X * 2][GRID_Y];
+float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow = 0;
+float scroll_speed = 1;
 
+int main() {
     InitWindow(SCREEN_X, SCREEN_Y, "DO NOT LOSE FOCUS.x86");
     SetTargetFPS(60);
 
