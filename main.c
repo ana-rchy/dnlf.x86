@@ -6,6 +6,7 @@
 
 int main() {
     char foreground[GRID_X * 2][GRID_Y], background_1[GRID_X * 2][GRID_Y], background_2[GRID_X * 2][GRID_Y];
+    float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow = 0;
     float scroll_speed = 1;
 
     InitWindow(SCREEN_X, SCREEN_Y, "DO NOT LOSE FOCUS.x86");
@@ -25,9 +26,9 @@ int main() {
         extend_layer_if_needed(DITHER_1, background_1);
         extend_layer_if_needed(DITHER_3, background_2);
         
-        /*scroll_layer(scroll_speed, foreground);*/
-        /*scroll_layer(scroll_speed / 2.0, background_1);*/
-        scroll_layer(scroll_speed / 3.0, background_2);
+        scroll_layer(scroll_speed, foreground, &fg_scroll_overflow);
+        scroll_layer(scroll_speed / 2.0, background_1, &bg_1_scroll_overflow);
+        scroll_layer(scroll_speed / 3.0, background_2, &bg_2_scroll_overflow);
 
         draw_level_to_screen(foreground, background_1, background_2);
 

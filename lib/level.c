@@ -16,25 +16,17 @@ void draw_level_to_screen(char (*foreground)[GRID_Y], char (*background_1)[GRID_
        }
     }
 
-    /*for (int x = 0; x < GRID_X; x++) {*/
-    /*    for (int y = 0; y < GRID_Y; y++) {*/
-    /*        if (background_1[x][y] == ' ') {*/
-    /*            continue;*/
-    /*        }*/
-    /**/
-    /*        draw_char(background_1[x][y], x, y);*/
-    /*   }*/
-    /*}*/
-    /**/
-    /*for (int x = 0; x < GRID_X; x++) {*/
-    /*    for (int y = 0; y < GRID_Y; y++) {*/
-    /*        if (foreground[x][y] == ' ') {*/
-    /*            continue;*/
-    /*        }*/
-    /**/
-    /*        draw_char(foreground[x][y], x, y);*/
-    /*   }*/
-    /*}*/
+    for (int x = 0; x < GRID_X; x++) {
+        for (int y = 0; y < GRID_Y; y++) {
+            draw_char(background_1[x][y], x, y);
+       }
+    }
+
+    for (int x = 0; x < GRID_X; x++) {
+        for (int y = 0; y < GRID_Y; y++) {
+            draw_char(foreground[x][y], x, y);
+       }
+    }
 }
 
 // reimplementation of the 'geometry' function
@@ -74,10 +66,11 @@ char** generate_screen(int stage, char chr) {
                 int edge_height = GetRandomValue(0, 1);
 
                 if ( (x <= edge_width || x >= rect_width - edge_width - 1) ||
-                     (y <= edge_height || y >= rect_height - edge_height - 1) )
+                     (y <= edge_height || y >= rect_height - edge_height - 1) ||
+                     chr != FULL_BLOCK)
                 {
                     new_screen[rect_abs_x_pos + x][rect_abs_y_pos + y] = chr;
-                } else if (chr == FULL_BLOCK) {
+                } else {
                     // this does the texture but i aint figuring out the formula sorry lol
                     /*new_screen[rect_abs_x_pos + x][rect_abs_y_pos + y] = (char) ( (sin(y * (stage+1)) * cos(x*x) * 2) + 2 ) + 220;*/
 
@@ -119,10 +112,11 @@ char** generate_screen(int stage, char chr) {
                     int edge_height = GetRandomValue(0, 2);
 
                     if ( (x <= edge_width || x >= rect_width - edge_width - 1) ||
-                         (y <= edge_height || y >= rect_height - edge_height - 1) )
+                         (y <= edge_height || y >= rect_height - edge_height - 1) ||
+                         chr != FULL_BLOCK)
                     {
                         new_screen[rect_abs_x_pos + x][y] = chr;
-                    } else if (chr == FULL_BLOCK) {
+                    } else {
                         new_screen[rect_abs_x_pos + x][y] = GetRandomValue(UP_HALF, RIGHT_HALF);
                     }
                 }
@@ -134,10 +128,11 @@ char** generate_screen(int stage, char chr) {
                     int edge_height = GetRandomValue(0, 4);
 
                     if ( (x <= edge_width || x >= rect_width - edge_width - 1) ||
-                         (y >= GRID_Y - edge_height - 1 || y <= GRID_Y - rect_height + edge_height) )
+                         (y >= GRID_Y - edge_height - 1 || y <= GRID_Y - rect_height + edge_height) ||
+                         chr != FULL_BLOCK)
                     {
                         new_screen[rect_abs_x_pos + x][y] = chr;
-                    } else if (chr == FULL_BLOCK) {
+                    } else {
                         // TODO: og is 'm[l(i,j)] = (sin(j*(stage+1))*cos(i*iframes+1)*2+2)+220;', gotta put in iframes instead ig
                         new_screen[rect_abs_x_pos + x][y] = GetRandomValue(UP_HALF, RIGHT_HALF);
                     }
@@ -149,17 +144,14 @@ char** generate_screen(int stage, char chr) {
     return new_screen;
 }
 
-float distance_overflow = 0;
-void scroll_layer(float distance, char (*layer)[GRID_Y]) {
+void scroll_layer(float distance, char (*layer)[GRID_Y], float* distance_overflow) {
     // TODO: verify length of x array
     
-    printf("%f\n", distance);
-    
-    distance_overflow += fmod(distance, 1);
+    *distance_overflow += fmod(distance, 1);
 
-    if (distance_overflow >= 1) {
-        distance += (int) distance_overflow;
-        distance_overflow = fmod(distance_overflow, 1);
+    if (*distance_overflow >= 1) {
+        distance += (int) *distance_overflow;
+        *distance_overflow = fmod(*distance_overflow, 1);
     }
     
     for (int i = 0; i < (int) distance; i++) {
