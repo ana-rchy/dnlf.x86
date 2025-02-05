@@ -22,7 +22,11 @@
 #define DITHER_2 'k'
 #define DITHER_3 'l'
 
+#define BG_1_PARALLAX_DIVIDER 2.0
+#define BG_2_PARALLAX_DIVIDER 3.0
+
 #define DNLF_WHITE (Color) { 242, 242, 242, 255 }
+#define DNLF_BLACK (Color) { 12, 12, 12, 255 }
 
 #define MAX_AIR_BLOCKS 6
 #define MIN_AIR_BLOCK_SIZE 2

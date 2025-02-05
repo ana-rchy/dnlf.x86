@@ -9,7 +9,7 @@ void setup_renderer() {
     font = LoadFont("font.png");
 }
 
-void draw_char(char c, int x, int y) {
+void draw_char(char c, int x, int y, Color fg_color, Color bg_color) {
     if (x >= GRID_X || y >= GRID_Y) {
         printf("given char pos out of bounds: %d %d\n", x, y);
         return;
@@ -22,24 +22,24 @@ void draw_char(char c, int x, int y) {
     char chr[2];
     sprintf(chr, "%c", c);
     
-    DrawRectangle(pos.x, pos.y, UNIT_X, UNIT_Y, DNLF_WHITE);
-    DrawTextEx(font, chr, pos, 12, 0, BLACK);
+    DrawRectangle(pos.x, pos.y, UNIT_X, UNIT_Y, bg_color);
+    DrawTextEx(font, chr, pos, 12, 0, fg_color);
 }
 
 // 'char (*foreground)[GRID_Y]' means you can pass in a 2d array
-void draw_level_to_screen(char (*foreground)[GRID_Y], char (*background_1)[GRID_Y], char (*background_2)[GRID_Y]) {
+void draw_level_to_screen(Color fg_color, Color bg_color, char (*foreground)[GRID_Y], char (*background_1)[GRID_Y], char (*background_2)[GRID_Y]) {
     // TODO: verify length of x array
     
     for (int x = 0; x < GRID_X; x++) {
         for (int y = 0; y < GRID_Y; y++) {
-            draw_char(background_2[x][y], x, y);
+            draw_char(background_2[x][y], x, y, fg_color, bg_color);
 
             if (background_1[x][y] != ' ') {
-                draw_char(background_1[x][y], x, y);
+                draw_char(background_1[x][y], x, y, fg_color, bg_color);
             }
 
             if (foreground[x][y] != ' ') {
-                draw_char(foreground[x][y], x, y);
+                draw_char(foreground[x][y], x, y, fg_color, bg_color);
             }
        }
     }
