@@ -5,25 +5,6 @@
 #include "defines.h"
 #include "renderer.h"
 
-// 'char (*foreground)[GRID_Y]' means you can pass in a 2d array
-void draw_level_to_screen(char (*foreground)[GRID_Y], char (*background_1)[GRID_Y], char (*background_2)[GRID_Y]) {
-    // TODO: verify length of x array
-    
-    for (int x = 0; x < GRID_X; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
-            draw_char(background_2[x][y], x, y);
-
-            if (background_1[x][y] != ' ') {
-                draw_char(background_1[x][y], x, y);
-            }
-
-            if (foreground[x][y] != ' ') {
-                draw_char(foreground[x][y], x, y);
-            }
-       }
-    }
-}
-
 // reimplementation of the 'geometry' function
 char** generate_screen(int stage, char chr) {
     // idk why this syntax works but sure
@@ -139,27 +120,6 @@ char** generate_screen(int stage, char chr) {
     return new_screen;
 }
 
-void scroll_layer(float distance, char (*layer)[GRID_Y], float* distance_overflow) {
-    // TODO: verify length of x array
-    
-    *distance_overflow += fmod(distance, 1);
-
-    if (*distance_overflow >= 1) {
-        distance += (int) *distance_overflow;
-        *distance_overflow = fmod(*distance_overflow, 1);
-    }
-    
-    for (int i = 0; i < (int) distance; i++) {
-        for (int y = 0; y < GRID_Y; y++) {
-            for (int x = 1; x < GRID_X * 2; x++) {
-                layer[x - 1][y] = layer[x][y];
-            }
-
-            layer[GRID_X * 2 - 1][y] = ' ';
-        }
-    }
-}
-
 bool should_generate_screen(char (*layer)[GRID_Y]) {
     // TODO: verify length of x array
 
@@ -175,6 +135,8 @@ bool should_generate_screen(char (*layer)[GRID_Y]) {
 
     return should_generate;
 }
+
+//////////////////////////////////////////////////////////////////
 
 void setup_layer(char chr, char (*layer)[GRID_Y]) {
     char** new_screen = generate_screen(0, chr);
@@ -201,6 +163,29 @@ void extend_layer_if_needed(char chr, char (*layer)[GRID_Y]) {
     for (int x = 0; x < GRID_X; x++) {
         for (int y = 0; y < GRID_Y; y++) {
             layer[GRID_X + x][y] = new_screen[x][y];
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////
+
+void scroll_layer(float distance, char (*layer)[GRID_Y], float* distance_overflow) {
+    // TODO: verify length of x array
+    
+    *distance_overflow += fmod(distance, 1);
+
+    if (*distance_overflow >= 1) {
+        distance += (int) *distance_overflow;
+        *distance_overflow = fmod(*distance_overflow, 1);
+    }
+    
+    for (int i = 0; i < (int) distance; i++) {
+        for (int y = 0; y < GRID_Y; y++) {
+            for (int x = 1; x < GRID_X * 2; x++) {
+                layer[x - 1][y] = layer[x][y];
+            }
+
+            layer[GRID_X * 2 - 1][y] = ' ';
         }
     }
 }
