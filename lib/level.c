@@ -120,6 +120,54 @@ char** generate_blocks(int stage, char chr) {
     return new_screen;
 }
 
+// TODO: make this function more readable jfc
+void add_rods(char (*layer)[GRID_Y], char chr) {
+    // TODO: verify length of x array
+
+    for (int x = GRID_X; x < GRID_X * 2; x++) {
+        for (int y = 0; y < GRID_Y; y++) {
+            int pt = -1;
+            
+            // bias towards vertical rods cause it checks for walls up and down for vertical,
+            // but only to the left for horizontal
+            if (layer[x][y] == ' ') {
+                if (y <= GRID_Y - 2 && layer[x][y + 1] == chr) {
+                    pt = 1;
+                }
+                if (x >= GRID_X + 1 && layer[x - 1][y] == chr) {
+                    pt = 2;
+                }
+                if (y >= 1 && layer[x][y - 1] == chr) {
+                    pt = 3;
+                }
+            }
+
+            if (pt == -1 || GetRandomValue(1, 64) != 1) {
+                continue;
+            }
+
+            switch (pt) {
+            case 1:
+                for (int y2 = y; y2 >= 0 && layer[x][y2] != chr; y2--) {
+                    layer[x][y2] = VERT_LINE;
+                }
+            case 2:
+                for (int x2 = x; x2 < GRID_X * 2 && layer[x2][y] != chr; x2++) {
+                    if (GetRandomValue(1, 10) == 1) {
+                        layer[x2][y] = T_LINE;
+                    } else {
+                        layer[x2][y] = HORIZ_LINE;
+                    }
+                }
+            case 3:
+                for (int y2 = y; y2 < GRID_Y && layer[x][y2] != chr; y2++) {
+                    layer[x][y2] = VERT_LINE;
+                }
+            }
+        }
+    }
+}
+
 bool should_generate_screen(char (*layer)[GRID_Y]) {
     // TODO: verify length of x array
 
@@ -152,6 +200,8 @@ void setup_layer(char chr, char (*layer)[GRID_Y]) {
             layer[GRID_X + x][y] = new_screen[x][y];
         }
     }
+
+    add_rods(layer, chr);
 }
 
 void extend_layer_if_needed(char chr, char (*layer)[GRID_Y]) {
@@ -165,6 +215,8 @@ void extend_layer_if_needed(char chr, char (*layer)[GRID_Y]) {
             layer[GRID_X + x][y] = new_screen[x][y];
         }
     }
+
+    add_rods(layer, chr);
 }
 
 //////////////////////////////////////////////////////////////////
