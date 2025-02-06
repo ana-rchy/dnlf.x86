@@ -157,7 +157,7 @@ void add_rods(char (*layer)[GRID_Y], char chr) {
             case 2:
                 for (int x2 = x; x2 < GRID_X * 2 && layer[x2][y] != chr; x2++) {
                     if (GetRandomValue(1, 10) == 1) {
-                        layer[x2][y] = T_LINE;
+                        layer[x2][y] = DOWN_T_LINE;
                     } else {
                         layer[x2][y] = HORIZ_LINE;
                     }
@@ -205,10 +205,14 @@ void add_rods(char (*layer)[GRID_Y], char chr) {
 
             if (leftwards && rightwards && upwards && downwards) {
                 layer[x][y] = PLUS_LINE;
-            } else if (leftwards && rightwards && upwards && !downwards) {
-                layer[x][y] = UPSDWN_T_LINE;
-            } else if (leftwards && rightwards && !upwards && downwards) {
-                layer[x][y] = T_LINE;
+            } else if (rightwards && upwards && downwards) {
+                layer[x][y] = LEFT_T_LINE;
+            } else if (leftwards && upwards && downwards) {
+                layer[x][y] = RIGHT_T_LINE;
+            } else if (leftwards && rightwards && upwards ) {
+                layer[x][y] = UP_T_LINE;
+            } else if (leftwards && rightwards && downwards) {
+                layer[x][y] = DOWN_T_LINE;
             }
         }
     }

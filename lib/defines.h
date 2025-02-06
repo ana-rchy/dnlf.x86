@@ -15,12 +15,14 @@
 #define RIGHT_HALF 'd'
 #define HORIZ_LINE 'e'
 #define VERT_LINE 'f'
-#define T_LINE 'g'
-#define UPSDWN_T_LINE 'h'
-#define PLUS_LINE 'i'
-#define DITHER_1 'j'
-#define DITHER_2 'k'
-#define DITHER_3 'l'
+#define LEFT_T_LINE 'g'
+#define RIGHT_T_LINE 'h'
+#define UP_T_LINE 'i'
+#define DOWN_T_LINE 'j'
+#define PLUS_LINE 'k'
+#define DITHER_1 'l'
+#define DITHER_2 'm'
+#define DITHER_3 'n'
 
 #define BG_1_PARALLAX_DIVIDER 2.0
 #define BG_2_PARALLAX_DIVIDER 3.0
