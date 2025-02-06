@@ -6,7 +6,7 @@
 #include "renderer.h"
 
 // reimplementation of the 'geometry' function
-char** generate_screen(int stage, char chr) {
+char** generate_blocks(int stage, char chr) {
     // idk why this syntax works but sure
     char** new_screen = malloc(GRID_X * sizeof(char*));
     for (int x = 0; x < GRID_X; x++) {
@@ -139,14 +139,14 @@ bool should_generate_screen(char (*layer)[GRID_Y]) {
 //////////////////////////////////////////////////////////////////
 
 void setup_layer(char chr, char (*layer)[GRID_Y]) {
-    char** new_screen = generate_screen(0, chr);
+    char** new_screen = generate_blocks(0, chr);
     for (int x = 0; x < GRID_X; x++) {
         for (int y = 0; y < GRID_Y; y++) {
             layer[x][y] = new_screen[x][y];
         }
     }
 
-    new_screen = generate_screen(0, chr);
+    new_screen = generate_blocks(0, chr);
     for (int x = 0; x < GRID_X; x++) {
         for (int y = 0; y < GRID_Y; y++) {
             layer[GRID_X + x][y] = new_screen[x][y];
@@ -159,7 +159,7 @@ void extend_layer_if_needed(char chr, char (*layer)[GRID_Y]) {
         return;
     }
 
-    char** new_screen = generate_screen(0, chr);
+    char** new_screen = generate_blocks(0, chr);
     for (int x = 0; x < GRID_X; x++) {
         for (int y = 0; y < GRID_Y; y++) {
             layer[GRID_X + x][y] = new_screen[x][y];

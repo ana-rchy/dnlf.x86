@@ -9,8 +9,8 @@ float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow = 0;
 
 float scroll_speed = 1;
 
-Color bg_color = DNLF_WHITE;
-Color fg_color = DNLF_BLACK;
+Color bg_color = DNLF_BLACK;
+Color fg_color = DNLF_BRIGHT_GREEN;
 
 int main() {
     InitWindow(SCREEN_X, SCREEN_Y, "DO NOT LOSE FOCUS.x86");

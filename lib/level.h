@@ -4,8 +4,9 @@
 #include <raylib.h>
 #include "defines.h"
 
-char** generate_screen(int stage, char chr);
-bool should_generate_screen(char (*level)[GRID_Y]);
+char** generate_blocks(int stage, char chr);
+char** generate_rods(char (*layer)[GRID_Y]);
+bool should_generate_screen(char (*layer)[GRID_Y]);
 
 void setup_layer(char chr, char (*layer)[GRID_Y]);
 void extend_layer_if_needed(char chr, char (*layer)[GRID_Y]);
