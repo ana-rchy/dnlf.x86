@@ -21,7 +21,7 @@ int main() {
     setup_layer(FULL_BLOCK, foreground);
     setup_layer(DITHER_1, background_1);
     setup_layer(DITHER_3, background_2);
-    
+
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(bg_color);
