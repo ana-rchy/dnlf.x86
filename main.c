@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <raylib.h>
 #include "lib/defines.h"
 #include "lib/renderer.h"
@@ -15,8 +17,8 @@ Color fg_color = DNLF_BLACK;
 int main() {
     InitWindow(SCREEN_X, SCREEN_Y, "DO NOT LOSE FOCUS.x86");
     SetTargetFPS(60);
-
     setup_renderer();
+    srand(time(NULL));
 
     setup_layer(FULL_BLOCK, foreground);
     setup_layer(DITHER_1, background_1);

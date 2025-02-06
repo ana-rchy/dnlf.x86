@@ -25,21 +25,21 @@ char** generate_blocks(int stage, char chr) {
     int air_blocks_count = MAX_AIR_BLOCKS - (max(stage - 4, 0) / 3);
 
     for (int i = 0; i < air_blocks_count; i++) {
-        int rect_width = GetRandomValue(MIN_AIR_BLOCK_SIZE, MAX_AIR_BLOCK_SIZE);
-        int rect_height = GetRandomValue(MIN_AIR_BLOCK_SIZE, MAX_AIR_BLOCK_SIZE);
+        int rect_width = rand_range(MIN_AIR_BLOCK_SIZE, MAX_AIR_BLOCK_SIZE);
+        int rect_height = rand_range(MIN_AIR_BLOCK_SIZE, MAX_AIR_BLOCK_SIZE);
         
         // rectangle absolute x/y pos
-        int rect_abs_x_pos = GetRandomValue(0, GRID_X - rect_width);
-        int rect_abs_y_pos = GetRandomValue(0, GRID_Y - rect_height);
+        int rect_abs_x_pos = rand_range(0, GRID_X - rect_width);
+        int rect_abs_y_pos = rand_range(0, GRID_Y - rect_height);
         
         // assumes a block starting from 0, 0
         // before actually putting it in the correct position in the new screen
         for (int x = 0; x < rect_width; x++) {
             for (int y = 0; y < rect_height; y++) {
                 // edges will be full blocks, the inside is textured with non-full blocks
-                // GetRandomValue() for either 1 thick or 2 thick edges
-                int edge_width = GetRandomValue(0, 1);
-                int edge_height = GetRandomValue(0, 1);
+                // rand_range() for either 1 thick or 2 thick edges
+                int edge_width = rand_range(0, 1);
+                int edge_height = rand_range(0, 1);
 
                 if ( (x <= edge_width || x >= rect_width - edge_width - 1) ||
                      (y <= edge_height || y >= rect_height - edge_height - 1) ||
@@ -51,7 +51,7 @@ char** generate_blocks(int stage, char chr) {
                     /*new_screen[rect_abs_x_pos + x][rect_abs_y_pos + y] = (char) ( (sin(y * (stage+1)) * cos(x*x) * 2) + 2 ) + 220;*/
 
                     // consts are char values
-                    new_screen[rect_abs_x_pos + x][rect_abs_y_pos + y] = GetRandomValue(UP_HALF, RIGHT_HALF);
+                    new_screen[rect_abs_x_pos + x][rect_abs_y_pos + y] = rand_range(UP_HALF, RIGHT_HALF);
                 }
            }
         }
@@ -65,27 +65,27 @@ char** generate_blocks(int stage, char chr) {
     int the_big_one = 0;
     
     for (int i = 0; i < MAX_EDGE_BLOCKS - (stage/2); i++) {
-        int rect_width = GetRandomValue(0, (GRID_X / 3) - 1);
+        int rect_width = rand_range(0, (GRID_X / 3) - 1);
         int rect_height;
-        int rect_abs_x_pos = GetRandomValue(0, GRID_X - rect_width);
-        bool on_ceiling = GetRandomValue(0, 1);
+        int rect_abs_x_pos = rand_range(0, GRID_X - rect_width);
+        bool on_ceiling = rand_range(0, 1);
         
         // stage 0-3 = 4 tall edge blocks, 4-7 = 3, ..., >= 16 = 0 tall blocks
         //
         // the higher the stage, the lower the probability of a tall block generating in any one screen
         // e.g. stage 0 = 1/5 chance, 1 = 1/10, 2 = 1/15, etc.
-        if (the_big_one < (MAX_TALL_EDGE_BLOCKS - (stage/4)) && GetRandomValue(1, (stage+1) * 5) == 1) {
-            rect_height = GetRandomValue(0, (GRID_Y / 2) - 1);
+        if (the_big_one < (MAX_TALL_EDGE_BLOCKS - (stage/4)) && rand_range(1, (stage+1) * 5) == 1) {
+            rect_height = rand_range(0, (GRID_Y / 2) - 1);
             the_big_one++;
         } else {
-            rect_height = GetRandomValue(0, (GRID_Y / 2) - (MIN_SHORT_TALL_BLOCK_DIFFERENCE - stage) - 1);
+            rect_height = rand_range(0, (GRID_Y / 2) - (MIN_SHORT_TALL_BLOCK_DIFFERENCE - stage) - 1);
         }
 
         if (on_ceiling) {
             for (int x = 0; x < rect_width; x++) {
                 for (int y = 0; y < rect_height; y++) {
-                    int edge_width = GetRandomValue(0, 2);
-                    int edge_height = GetRandomValue(0, 2);
+                    int edge_width = rand_range(0, 2);
+                    int edge_height = rand_range(0, 2);
 
                     if ( (x <= edge_width || x >= rect_width - edge_width - 1) ||
                          (y <= edge_height || y >= rect_height - edge_height - 1) ||
@@ -93,15 +93,15 @@ char** generate_blocks(int stage, char chr) {
                     {
                         new_screen[rect_abs_x_pos + x][y] = chr;
                     } else {
-                        new_screen[rect_abs_x_pos + x][y] = GetRandomValue(UP_HALF, RIGHT_HALF);
+                        new_screen[rect_abs_x_pos + x][y] = rand_range(UP_HALF, RIGHT_HALF);
                     }
                 }
             }
         } else {
             for (int x = 0; x < rect_width; x++) {
                 for (int y = GRID_Y - 1; y >= GRID_Y - rect_height; y--) {
-                    int edge_width = GetRandomValue(0, 4);
-                    int edge_height = GetRandomValue(0, 4);
+                    int edge_width = rand_range(0, 4);
+                    int edge_height = rand_range(0, 4);
 
                     if ( (x <= edge_width || x >= rect_width - edge_width - 1) ||
                          (y >= GRID_Y - edge_height - 1 || y <= GRID_Y - rect_height + edge_height) ||
@@ -110,7 +110,7 @@ char** generate_blocks(int stage, char chr) {
                         new_screen[rect_abs_x_pos + x][y] = chr;
                     } else {
                         // TODO: og is 'm[l(i,j)] = (sin(j*(stage+1))*cos(i*iframes+1)*2+2)+220;', gotta put in iframes instead ig
-                        new_screen[rect_abs_x_pos + x][y] = GetRandomValue(UP_HALF, RIGHT_HALF);
+                        new_screen[rect_abs_x_pos + x][y] = rand_range(UP_HALF, RIGHT_HALF);
                     }
                 }
             }
@@ -143,7 +143,7 @@ void add_rods(char (*layer)[GRID_Y], char chr) {
                 }
             }
 
-            if (pt == -1 || GetRandomValue(1, 64) != 1) {
+            if (pt == -1 || rand_range(1, 64) != 1) {
                 continue;
             }
 
@@ -156,7 +156,7 @@ void add_rods(char (*layer)[GRID_Y], char chr) {
 
             case 2:
                 for (int x2 = x; x2 < GRID_X * 2 && layer[x2][y] != chr; x2++) {
-                    if (GetRandomValue(1, 10) == 1) {
+                    if (rand_range(1, 10) == 1) {
                         layer[x2][y] = DOWN_T_LINE;
                     } else {
                         layer[x2][y] = HORIZ_LINE;
