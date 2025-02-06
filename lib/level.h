@@ -11,4 +11,5 @@ bool should_generate_screen(char (*layer)[GRID_Y]);
 void setup_layer(char chr, char (*layer)[GRID_Y]);
 void extend_layer_if_needed(char chr, char (*layer)[GRID_Y]);
 
-void scroll_layer(float distance, char (*layer)[GRID_Y], float* distance_overflow);
+void scroll_layer(char (*layer)[GRID_Y]);
+void scroll_and_extend_layer(float distance, char (*layer)[GRID_Y], float* distance_overflow);

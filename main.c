@@ -30,9 +30,9 @@ int main() {
         extend_layer_if_needed(DITHER_1, background_1);
         extend_layer_if_needed(DITHER_3, background_2);
         
-        scroll_layer(scroll_speed, foreground, &fg_scroll_overflow);
-        scroll_layer(scroll_speed / BG_1_PARALLAX_DIVIDER, background_1, &bg_1_scroll_overflow);
-        scroll_layer(scroll_speed / BG_2_PARALLAX_DIVIDER, background_2, &bg_2_scroll_overflow);
+        scroll_and_extend_layer(scroll_speed, foreground, &fg_scroll_overflow);
+        scroll_and_extend_layer(scroll_speed / BG_1_PARALLAX_DIVIDER, background_1, &bg_1_scroll_overflow);
+        scroll_and_extend_layer(scroll_speed / BG_2_PARALLAX_DIVIDER, background_2, &bg_2_scroll_overflow);
 
         draw_level_to_screen(fg_color, bg_color, foreground, background_1, background_2);
 

@@ -267,23 +267,27 @@ void extend_layer_if_needed(char chr, char (*layer)[GRID_Y]) {
 
 //////////////////////////////////////////////////////////////////
 
-void scroll_layer(float distance, char (*layer)[GRID_Y], float* distance_overflow) {
+void scroll_layer(char (*layer)[GRID_Y]) {
+    for (int y = 0; y < GRID_Y; y++) {
+        for (int x = 1; x < GRID_X * 2; x++) {
+            layer[x - 1][y] = layer[x][y];
+        }
+
+        layer[GRID_X * 2 - 1][y] = ' ';
+    }
+}
+
+void scroll_and_extend_layer(float distance, char (*layer)[GRID_Y], float* distance_overflow) {
     // TODO: verify length of x array
-    
+
     *distance_overflow += fmod(distance, 1);
 
     if (*distance_overflow >= 1) {
         distance += (int) *distance_overflow;
         *distance_overflow = fmod(*distance_overflow, 1);
     }
-    
-    for (int i = 0; i < (int) distance; i++) {
-        for (int y = 0; y < GRID_Y; y++) {
-            for (int x = 1; x < GRID_X * 2; x++) {
-                layer[x - 1][y] = layer[x][y];
-            }
 
-            layer[GRID_X * 2 - 1][y] = ' ';
-        }
+    for (int i = 0; i < (int) distance; i++) {
+        scroll_layer(layer);
     }
 }
