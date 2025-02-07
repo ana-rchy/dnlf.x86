@@ -3,7 +3,7 @@
 #include <math.h>
 #include "level.h"
 #include "defines.h"
-#include "renderer.h"
+#include <stdio.h>
 
 // reimplementation of the 'geometry' function
 char** generate_blocks(int stage, char chr) {
@@ -47,11 +47,7 @@ char** generate_blocks(int stage, char chr) {
                 {
                     new_screen[rect_abs_x_pos + x][rect_abs_y_pos + y] = chr;
                 } else {
-                    // this does the texture but i aint figuring out the formula sorry lol
-                    /*new_screen[rect_abs_x_pos + x][rect_abs_y_pos + y] = (char) ( (sin(y * (stage+1)) * cos(x*x) * 2) + 2 ) + 220;*/
-
-                    // consts are char values
-                    new_screen[rect_abs_x_pos + x][rect_abs_y_pos + y] = rand_range(UP_HALF, RIGHT_HALF);
+                    new_screen[rect_abs_x_pos + x][rect_abs_y_pos + y] = weird_texture_formula(x, y, stage);
                 }
            }
         }
@@ -93,7 +89,7 @@ char** generate_blocks(int stage, char chr) {
                     {
                         new_screen[rect_abs_x_pos + x][y] = chr;
                     } else {
-                        new_screen[rect_abs_x_pos + x][y] = rand_range(UP_HALF, RIGHT_HALF);
+                        new_screen[rect_abs_x_pos + x][y] = weird_texture_formula(x, y, stage);
                     }
                 }
             }
@@ -110,7 +106,7 @@ char** generate_blocks(int stage, char chr) {
                         new_screen[rect_abs_x_pos + x][y] = chr;
                     } else {
                         // TODO: og is 'm[l(i,j)] = (sin(j*(stage+1))*cos(i*iframes+1)*2+2)+220;', gotta put in iframes instead ig
-                        new_screen[rect_abs_x_pos + x][y] = rand_range(UP_HALF, RIGHT_HALF);
+                        new_screen[rect_abs_x_pos + x][y] = weird_texture_formula(x, y, stage);
                     }
                 }
             }
@@ -205,11 +201,11 @@ void add_rods(char (*layer)[GRID_Y], char chr) {
 
             if (leftwards && rightwards && upwards && downwards) {
                 layer[x][y] = PLUS_LINE;
-            } else if (rightwards && upwards && downwards) {
-                layer[x][y] = LEFT_T_LINE;
             } else if (leftwards && upwards && downwards) {
+                layer[x][y] = LEFT_T_LINE;
+            } else if (rightwards && upwards && downwards) {
                 layer[x][y] = RIGHT_T_LINE;
-            } else if (leftwards && rightwards && upwards ) {
+            } else if (leftwards && rightwards && upwards) {
                 layer[x][y] = UP_T_LINE;
             } else if (leftwards && rightwards && downwards) {
                 layer[x][y] = DOWN_T_LINE;
@@ -232,6 +228,40 @@ bool should_generate_screen(char (*layer)[GRID_Y]) {
     }
 
     return should_generate;
+}
+
+char weird_texture_formula(int x, int y, int stage) {
+    // the ANSI code for upper-half block is 224, but the formula never seems to actually go up to 224
+    // but somehow in the og, that result DOESNT go to 223 when truncating, it goes to 224
+    // whereas when i was testing it, it does (windows vs linux difference?)
+    //
+    // the issue is: i dont know at what threshold 223.xxxxx goes to 224 in the og
+    // so im just gonna guess and make the threshold 223.9
+    
+    float formula_result = ( sin(y * (stage+1)) * cos(x*x) * 2 ) + 2 + 220;
+    if (formula_result > 223.9) {
+        formula_result = 224.0;
+    }
+
+    switch ((int) formula_result) {
+    case 220:
+        return FULL_BLOCK;
+    
+    case 221:
+        return DOWN_HALF;
+
+    case 222:
+        return LEFT_HALF;
+
+    case 223:
+        return RIGHT_HALF;
+
+    case 224:
+        return UP_HALF;
+
+    default:
+        return FULL_BLOCK;
+    }
 }
 
 //////////////////////////////////////////////////////////////////
@@ -281,7 +311,7 @@ void scroll_layer(char (*layer)[GRID_Y]) {
     }
 }
 
-void scroll_and_extend_layer(float distance, char (*layer)[GRID_Y], float* distance_overflow) {
+void scroll_and_extend_layer(char (*layer)[GRID_Y], char chr, float distance, float* distance_overflow) {
     // TODO: verify length of x array
 
     *distance_overflow += fmod(distance, 1);
@@ -293,5 +323,6 @@ void scroll_and_extend_layer(float distance, char (*layer)[GRID_Y], float* dista
 
     for (int i = 0; i < (int) distance; i++) {
         scroll_layer(layer);
+        extend_layer_if_needed(chr, layer);
     }
 }

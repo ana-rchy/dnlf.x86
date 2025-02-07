@@ -28,13 +28,9 @@ int main() {
         BeginDrawing();
         ClearBackground(bg_color);
 
-        extend_layer_if_needed(FULL_BLOCK, foreground);
-        extend_layer_if_needed(DITHER_1, background_1);
-        extend_layer_if_needed(DITHER_3, background_2);
-        
-        scroll_and_extend_layer(scroll_speed, foreground, &fg_scroll_overflow);
-        scroll_and_extend_layer(scroll_speed / BG_1_PARALLAX_DIVIDER, background_1, &bg_1_scroll_overflow);
-        scroll_and_extend_layer(scroll_speed / BG_2_PARALLAX_DIVIDER, background_2, &bg_2_scroll_overflow);
+        scroll_and_extend_layer(foreground, FULL_BLOCK, scroll_speed, &fg_scroll_overflow);
+        scroll_and_extend_layer(background_1, DITHER_1, scroll_speed / BG_1_PARALLAX_DIVIDER, &bg_1_scroll_overflow);
+        scroll_and_extend_layer(background_2, DITHER_3, scroll_speed / BG_2_PARALLAX_DIVIDER, &bg_2_scroll_overflow);
 
         draw_level_to_screen(fg_color, bg_color, foreground, background_1, background_2);
 
