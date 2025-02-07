@@ -27,9 +27,7 @@ void draw_char(char c, int x, int y, Color fg_color, Color bg_color) {
 }
 
 // 'char (*foreground)[GRID_Y]' means you can pass in a 2d array
-void draw_level_to_screen(Color fg_color, Color bg_color, char (*foreground)[GRID_Y], char (*background_1)[GRID_Y], char (*background_2)[GRID_Y]) {
-    // TODO: verify length of x array
-    
+void draw_level_to_screen(Color fg_color, Color bg_color, char foreground[GRID_X * 2][GRID_Y], char background_1[GRID_X * 2][GRID_Y], char background_2[GRID_X * 2][GRID_Y]) {
     for (int x = 0; x < GRID_X; x++) {
         for (int y = 0; y < GRID_Y; y++) {
             draw_char(background_2[x][y], x, y, fg_color, bg_color);

@@ -117,9 +117,7 @@ char** generate_blocks(int stage, char chr) {
 }
 
 // TODO: make this function more readable jfc
-void add_rods(char (*layer)[GRID_Y], char chr) {
-    // TODO: verify length of x array
-
+void add_rods(char layer[GRID_X * 2][GRID_Y], char chr) {
     for (int x = GRID_X; x < GRID_X * 2; x++) {
         for (int y = 0; y < GRID_Y; y++) {
             int pt = -1;
@@ -214,9 +212,7 @@ void add_rods(char (*layer)[GRID_Y], char chr) {
     }
 }
 
-bool should_generate_screen(char (*layer)[GRID_Y]) {
-    // TODO: verify length of x array
-
+bool should_generate_screen(char layer[GRID_X * 2][GRID_Y]) {
     bool should_generate = true;
 
     for (int x = GRID_X; x < GRID_X * 2; x++) {
@@ -266,7 +262,7 @@ char weird_texture_formula(int x, int y, int stage) {
 
 //////////////////////////////////////////////////////////////////
 
-void setup_layer(char chr, char (*layer)[GRID_Y]) {
+void setup_layer(char chr, char layer[GRID_X * 2][GRID_Y]) {
     char** new_screen = generate_blocks(0, chr);
     for (int x = 0; x < GRID_X; x++) {
         for (int y = 0; y < GRID_Y; y++) {
@@ -284,7 +280,7 @@ void setup_layer(char chr, char (*layer)[GRID_Y]) {
     add_rods(layer, chr);
 }
 
-void extend_layer_if_needed(char chr, char (*layer)[GRID_Y]) {
+void extend_layer_if_needed(char chr, char layer[GRID_X * 2][GRID_Y]) {
     if (!should_generate_screen(layer)) {
         return;
     }
@@ -301,7 +297,7 @@ void extend_layer_if_needed(char chr, char (*layer)[GRID_Y]) {
 
 //////////////////////////////////////////////////////////////////
 
-void scroll_layer(char (*layer)[GRID_Y]) {
+void scroll_layer(char layer[GRID_X * 2][GRID_Y]) {
     for (int y = 0; y < GRID_Y; y++) {
         for (int x = 1; x < GRID_X * 2; x++) {
             layer[x - 1][y] = layer[x][y];
@@ -311,9 +307,7 @@ void scroll_layer(char (*layer)[GRID_Y]) {
     }
 }
 
-void scroll_and_extend_layer(char (*layer)[GRID_Y], char chr, float distance, float* distance_overflow) {
-    // TODO: verify length of x array
-
+void scroll_and_extend_layer(char layer[GRID_X * 2][GRID_Y], char chr, float distance, float* distance_overflow) {
     *distance_overflow += fmod(distance, 1);
 
     if (*distance_overflow >= 1) {
