@@ -1,7 +1,5 @@
 #include <stdio.h>
-#include <raylib.h>
 #include "renderer.h"
-#include "defines.h"
 
 Font font;
 

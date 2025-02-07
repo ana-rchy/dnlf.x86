@@ -1,4 +1,5 @@
 #pragma once
+#include <stdlib.h>
 
 #define FRAME_RATE 60
 #define SCREEN_X 1024
