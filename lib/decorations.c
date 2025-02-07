@@ -5,28 +5,28 @@
 void add_rods(char layer[GRID_X * 2][GRID_Y], char chr) {
     for (int x = GRID_X; x < GRID_X * 2; x++) {
         for (int y = 0; y < GRID_Y; y++) {
-            int pt = -1;
+            if (rand_range(1, 64) != 1) {
+                continue;
+            }
+
+            int rod_direction = -1;
             
             // bias towards vertical rods cause it checks for walls up and down for vertical,
             // but only to the left for horizontal
             if (layer[x][y] == ' ') {
-                // -1 for length to index, -1 to be not on the edge
+                // - 1 for length to index, - 1 to be not on the edge
                 if (y <= GRID_Y - 2 && layer[x][y + 1] == chr) {
-                    pt = 1;
+                    rod_direction = 1;
                 }
                 if (x >= GRID_X + 1 && layer[x - 1][y] == chr) {
-                    pt = 2;
+                    rod_direction = 2;
                 }
                 if (y >= 1 && layer[x][y - 1] == chr) {
-                    pt = 3;
+                    rod_direction = 3;
                 }
             }
 
-            if (pt == -1 || rand_range(1, 64) != 1) {
-                continue;
-            }
-
-            switch (pt) {
+            switch (rod_direction) {
             case 1:
                 for (int y2 = y; y2 >= 0 && layer[x][y2] != chr; y2--) {
                     layer[x][y2] = VERT_LINE;
@@ -64,23 +64,13 @@ void add_rods(char layer[GRID_X * 2][GRID_Y], char chr) {
 
     for (int x = GRID_X; x < GRID_X * 2; x++) {
         for (int y = 0; y < GRID_Y; y++) {
-            bool leftwards = false;
-            bool rightwards = false;
-            bool upwards = false;
-            bool downwards = false;
+            bool leftwards = (x >= GRID_X + 1 && layer[x - 1][y] == HORIZ_LINE);
 
-            if (x >= GRID_X + 1 && layer[x - 1][y] == HORIZ_LINE) {
-                leftwards = true;
-            }
-            if (x <= (GRID_X*2) - 2 && layer[x + 1][y] == HORIZ_LINE) {
-                rightwards = true;
-            }
-            if (y >= 1 && layer[x][y - 1] == VERT_LINE) {
-                upwards = true;
-            }
-            if (y <= GRID_Y - 2 && layer[x][y + 1] == VERT_LINE) {
-                downwards = true;
-            }
+            bool rightwards = (x <= (GRID_X*2) - 2 && layer[x + 1][y] == HORIZ_LINE);
+
+            bool upwards = (y >= 1 && layer[x][y - 1] == VERT_LINE);
+
+            bool downwards = (y <= GRID_Y - 2 && layer[x][y + 1] == VERT_LINE);
 
             if (leftwards && rightwards && upwards && downwards) {
                 layer[x][y] = PLUS_LINE;
