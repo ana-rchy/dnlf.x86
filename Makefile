@@ -7,7 +7,7 @@ run: main
 
 
 main: main.c
-	$(CC) main.c lib/*.c -l raylib -l m -o output/main
+	$(CC) main.c lib/*.c -l raylib -l m -Wall -o output/main
 
 clean:
 	rm -f output/main

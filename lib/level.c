@@ -34,14 +34,13 @@ void extend_layer_if_needed(char chr, char layer[GRID_X * 2][GRID_Y]) {
     add_rods(layer, chr);
 }
 
-
 //////////////////////////////////////////////////////////////////
 
 void scroll_layer(char layer[GRID_X * 2][GRID_Y]) {
     for (int y = 0; y < GRID_Y; y++) {
         for (int x = 1; x < GRID_X * 2; x++) {
             layer[x - 1][y] = layer[x][y];
-        }
+       }
 
         layer[GRID_X * 2 - 1][y] = ' ';
     }

@@ -1,5 +1,7 @@
 #include "decorations.h"
+#include "defines.h"
 #include <stdbool.h>
+#include <string.h>
 
 // TODO: make this function more readable jfc
 void add_rods(char layer[GRID_X * 2][GRID_Y], char chr) {
@@ -87,3 +89,55 @@ void add_rods(char layer[GRID_X * 2][GRID_Y], char chr) {
     }
 }
 
+//////////////////////////////////////////////////////////////////
+
+void clear_particles(Particle particles[MAX_PARTICLES]) {
+    for (int i = 0; i < MAX_PARTICLES; i++) {
+        particles[i].group = "";
+    }
+}
+
+void insert_new_particle(Vector2 pos, Vector2 speed, Vector2 accel, char states[2], int current_state, float state_period, char* group, Particle particles[MAX_PARTICLES]) {
+    int free_index = -1;
+    for (int i = 0; i < MAX_PARTICLES; i++) {
+        if (strcmp(particles[i].group, "") == 0) {
+            free_index = i;
+            break;
+        }
+    }
+
+    if (free_index == -1) {
+        return;
+    }
+
+    particles[free_index].pos = pos;
+    particles[free_index].speed = speed;
+    particles[free_index].accel = accel;
+    particles[free_index].states[0] = states[0];
+    particles[free_index].states[1] = states[1];
+    particles[free_index].current_state = current_state;
+    particles[free_index].state_period = state_period;
+    particles[free_index].group = group;
+}
+
+void update_particles(Particle particles[MAX_PARTICLES]) {
+    for (int i = 0; i < MAX_PARTICLES; i++) {
+        if (strcmp(particles[i].group, "") == 0) {
+            continue;
+        }
+
+        particles[i].speed.x += particles[i].accel.x;
+        particles[i].speed.y += particles[i].accel.y;
+
+        // TODO: og is 'part[i].x += part[i].dx + part[i].dx * (xlen-shifta)/20*(shifta>1);'
+        // the 'shifta' part speeds up the particles on the main menu once play is pressed, together with the rest of the screen
+        particles[i].pos.x += particles[i].speed.x;
+        particles[i].pos.y += particles[i].speed.y;
+
+        if (particles[i].pos.x < 0 || particles[i].pos.y >= GRID_X ||
+            particles[i].pos.y < 0 || particles[i].pos.y >= GRID_Y)
+        {
+            particles[i].group = "";
+        } else if (
+    }
+}
