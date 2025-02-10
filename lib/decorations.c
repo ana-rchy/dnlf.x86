@@ -97,7 +97,15 @@ void clear_particles(Particle particles[MAX_PARTICLES]) {
     }
 }
 
-void insert_new_particle(Vector2 pos, Vector2 speed, Vector2 accel, char states[2], int current_state, float state_period, char* group, Particle particles[MAX_PARTICLES]) {
+void insert_new_particle(Vector2 pos,
+                         Vector2 speed,
+                         Vector2 accel,
+                         char states[PARTICLE_STATES],
+                         int current_state,
+                         float state_period,
+                         char* group,
+                         Particle particles[MAX_PARTICLES])
+{
     int free_index = -1;
     for (int i = 0; i < MAX_PARTICLES; i++) {
         if (strcmp(particles[i].group, "") == 0) {
@@ -120,6 +128,8 @@ void insert_new_particle(Vector2 pos, Vector2 speed, Vector2 accel, char states[
     particles[free_index].group = group;
 }
 
+//////////////////////////////////////////////////////////////////
+
 void update_particles(Particle particles[MAX_PARTICLES]) {
     for (int i = 0; i < MAX_PARTICLES; i++) {
         if (strcmp(particles[i].group, "") == 0) {
@@ -134,10 +144,16 @@ void update_particles(Particle particles[MAX_PARTICLES]) {
         particles[i].pos.x += particles[i].speed.x;
         particles[i].pos.y += particles[i].speed.y;
 
-        if (particles[i].pos.x < 0 || particles[i].pos.y >= GRID_X ||
-            particles[i].pos.y < 0 || particles[i].pos.y >= GRID_Y)
+        if (particles[i].pos.x < 0 || particles[i].pos.x >= (float) GRID_X ||
+            particles[i].pos.y < 0 || particles[i].pos.y >= (float) GRID_Y)
         {
             particles[i].group = "";
-        } else if (
+            return;
+        }
+
+        if (particles[i].state_period != -1 && particles[i].state_timer >= particles[i].state_period) {
+            particles[i].current_state = (particles[i].current_state + 1) % PARTICLE_STATES;
+            particles[i].state_timer -= particles[i].state_period;
+        }
     }
 }

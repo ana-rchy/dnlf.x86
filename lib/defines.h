@@ -57,6 +57,7 @@
 #define SCROLL_SPEED_ACCELERATION 0.0001
 
 #define MAX_PARTICLES 1024
+#define PARTICLE_STATES 2
 
 #define max(a, b) ( ((a) > (b)) ? (a) : (b) )
 #define rand_range(min, max) ( (rand() % (max - min + 1)) + min )
