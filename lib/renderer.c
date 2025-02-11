@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <string.h>
 #include "renderer.h"
+#include "defines.h"
 
 Font font;
 
@@ -38,5 +40,17 @@ void draw_level_to_screen(Color fg_color, Color bg_color, char foreground[GRID_X
                 draw_char(foreground[x][y], x, y, fg_color, bg_color);
             }
        }
+    }
+}
+
+void draw_particles(Color fg_color, Color bg_color, Particle particles[MAX_PARTICLES]) {
+    for (int i = 0; i < MAX_PARTICLES; i++) {
+        if (strcmp(particles[i].group, "") == 0) {
+            continue;
+        }
+
+        char chr = particles[i].states[particles[i].current_state];
+
+        draw_char(chr, (int) particles[i].pos.x, (int) particles[i].pos.y, fg_color, bg_color);
     }
 }

@@ -1,7 +1,9 @@
 #include "decorations.h"
-#include "defines.h"
+#include <raylib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
+#include "defines.h"
 
 // TODO: make this function more readable jfc
 void add_rods(char layer[GRID_X * 2][GRID_Y], char chr) {
@@ -150,6 +152,8 @@ void update_particles(Particle particles[MAX_PARTICLES]) {
             particles[i].group = "";
             return;
         }
+
+        particles[i].state_timer += GetFrameTime();
 
         if (particles[i].state_period != -1 && particles[i].state_timer >= particles[i].state_period) {
             particles[i].current_state = (particles[i].current_state + 1) % PARTICLE_STATES;
