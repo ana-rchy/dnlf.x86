@@ -1,4 +1,5 @@
 #pragma once
+#include "defines.h"
 
 typedef struct Player {
     float y_pos;
@@ -10,4 +11,4 @@ typedef struct Player {
 } Player;
 
 void reset_player(Player* player);
-void update_player(Player* player);
+void update_player(Player* player, char foreground[GRID_X * 2][GRID_Y]);

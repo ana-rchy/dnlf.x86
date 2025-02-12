@@ -1,6 +1,5 @@
 #include "player.h"
 #include <raylib.h>
-#include "defines.h"
 
 void reset_player(Player* player) {
     player->y_pos = PLAYER_START_Y;
@@ -11,7 +10,7 @@ void reset_player(Player* player) {
     player->invul_frames_max = 15;
 }
 
-void update_player(Player* player) {
+void update_player(Player* player, char foreground[GRID_X * 2][GRID_Y]) {
     if (IsKeyPressed(KEY_UP)) {
         player->y_accel = -player->y_accel;
         player->y_speed = player->y_speed / 2;
@@ -21,4 +20,11 @@ void update_player(Player* player) {
     
     player->y_speed += player->y_accel;
     player->y_pos += player->y_speed;
+
+    if (player->y_pos < 0 || player->y_pos >= (float) GRID_Y) {
+        player->y_pos = clamp(player->y_pos, 0, (float) GRID_Y - 1);
+        player->y_speed = 0;
+    }
+
+    // TODO: hit the level blocks and stuff
 }

@@ -64,7 +64,7 @@ int main() {
 void game_loop() {
     level_loop();
     particles_loop();
-    update_player(&player);
+    update_player(&player, foreground);
 
     draw_level_to_screen(fg_color, bg_color, foreground, background_1, background_2);
     draw_particles(fg_color, bg_color, particles);

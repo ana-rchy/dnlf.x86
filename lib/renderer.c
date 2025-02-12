@@ -11,7 +11,7 @@ void setup_renderer() {
 
 void draw_char(char c, int x, int y, Color fg_color, Color bg_color) {
     if (x < 0 || x >= GRID_X || y < 0 || y >= GRID_Y) {
-        printf("given char pos out of bounds: %d %d\n", x, y);
+        printf("char %c out of bounds @ (%d, %d)\n", c, x, y);
         return;
     }
 
