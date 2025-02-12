@@ -54,10 +54,18 @@
 #define MAX_TALL_EDGE_BLOCKS 4
 #define MIN_SHORT_TALL_BLOCK_DIFFERENCE 15
 
+#define MAX_STAGE 15
+#define STAGE_TIME 1.5
 #define SCROLL_SPEED_ACCELERATION 0.0001
 
 #define MAX_PARTICLES 1024
 #define PARTICLE_STATES 2
 
-#define max(a, b) ( ((a) > (b)) ? (a) : (b) )
+#define PLAYER_X 30
+#define PLAYER_START_Y (float) GRID_Y / 2
+#define PLAYER_Y_ACCEL 0.04
+
+
+#define min(a, b) ( (a < b) ? a : b )
+#define max(a, b) ( (a > b) ? a : b )
 #define rand_range(min, max) ( (rand() % (max - min + 1)) + min )

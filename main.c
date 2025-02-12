@@ -6,20 +6,30 @@
 #include "lib/renderer.h"
 #include "lib/level.h"
 #include "lib/decorations.h"
+#include "lib/player.h"
 
 char foreground[GRID_X * 2][GRID_Y], background_1[GRID_X * 2][GRID_Y], background_2[GRID_X * 2][GRID_Y];
 float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow = 0;
 
-Particle particles[MAX_PARTICLES];
-
+int stage = 0;
+float timer = 0;
 float scroll_speed = 1;
 
 Color bg_color = DNLF_WHITE;
 Color fg_color = DNLF_BLACK;
 
+Particle particles[MAX_PARTICLES];
+
+Player player = { GRID_Y / 2, 0, 0.04, 'v', 0, 15 };
+
+
 void game_loop();
 void level_loop();
 void particles_loop();
+void player_loop();
+
+void set_stage_colors(int stage, Color* fg_color, Color* bg_color);
+
 
 int main() {
     InitWindow(SCREEN_X, SCREEN_Y, "DO NOT LOSE FOCUS.x86");
@@ -38,6 +48,10 @@ int main() {
         ClearBackground(bg_color);
 
         game_loop();
+        
+        timer += GetFrameTime();
+        stage = min(timer / STAGE_TIME, MAX_STAGE);
+        set_stage_colors(stage, &fg_color, &bg_color);
 
         EndDrawing();
     }
@@ -50,16 +64,25 @@ int main() {
 void game_loop() {
     level_loop();
     particles_loop();
+    update_player(&player);
+
+    draw_level_to_screen(fg_color, bg_color, foreground, background_1, background_2);
+    draw_particles(fg_color, bg_color, particles);
+
+    draw_char(player.head_char, PLAYER_X, player.y_pos, fg_color, bg_color);
+    if (player.invul_frames > 0) {
+        draw_char('@', PLAYER_X - 1, player.y_pos, fg_color, bg_color);
+    } else {
+        draw_char('#', PLAYER_X - 1, player.y_pos, fg_color, bg_color);
+    }
 }
 
 void level_loop() {
-    scroll_and_extend_layer(foreground, FULL_BLOCK, scroll_speed, &fg_scroll_overflow);
-    scroll_and_extend_layer(background_1, DITHER_1, scroll_speed / BG_1_PARALLAX_DIVIDER, &bg_1_scroll_overflow);
-    scroll_and_extend_layer(background_2, DITHER_3, scroll_speed / BG_2_PARALLAX_DIVIDER, &bg_2_scroll_overflow);
+    scroll_and_extend_layer(foreground, stage, FULL_BLOCK, scroll_speed, &fg_scroll_overflow);
+    scroll_and_extend_layer(background_1, stage, DITHER_1, scroll_speed / BG_1_PARALLAX_DIVIDER, &bg_1_scroll_overflow);
+    scroll_and_extend_layer(background_2, stage, DITHER_3, scroll_speed / BG_2_PARALLAX_DIVIDER, &bg_2_scroll_overflow);
 
     scroll_speed += SCROLL_SPEED_ACCELERATION;
-
-    draw_level_to_screen(fg_color, bg_color, foreground, background_1, background_2);
 }
 
 void particles_loop() {
@@ -77,6 +100,78 @@ void particles_loop() {
             particles
         );
     }
+}
 
-    draw_particles(fg_color, bg_color, particles);
+//////////////////////////////////////////////////////////////////
+
+void set_stage_colors(int stage, Color* fg_color, Color* bg_color) {
+    switch (stage) {
+    case 1:
+        *fg_color = DNLF_BLUE;
+        break;
+
+    case 2:
+        *fg_color = DNLF_GREEN;
+        break;
+
+    case 3:
+        *fg_color = DNLF_CYAN;
+        break;
+
+    case 4:
+        *fg_color = DNLF_RED;
+        break;
+
+    case 5:
+        *fg_color = DNLF_PURPLE;
+        break;
+
+    case 6:
+        *fg_color = DNLF_YELLOW;
+        break;
+
+    case 7:
+        *fg_color = DNLF_LIGHT_GRAY;
+        break;
+
+    case 8:
+        *bg_color = DNLF_BLACK;
+        *fg_color = DNLF_DARK_GRAY;
+        break;
+
+    case 9:
+        *bg_color = DNLF_BLUE;
+        *fg_color = DNLF_BRIGHT_BLUE;
+        break;
+
+    case 10:
+        *bg_color = DNLF_GREEN;
+        *fg_color = DNLF_BRIGHT_GREEN;
+        break;
+
+    case 11:
+        *bg_color = DNLF_CYAN;
+        *fg_color = DNLF_BRIGHT_CYAN;
+        break;
+
+    case 12:
+        *bg_color = DNLF_RED;
+        *fg_color = DNLF_BRIGHT_RED;
+        break;
+
+    case 13:
+        *bg_color = DNLF_PURPLE;
+        *fg_color = DNLF_BRIGHT_PURPLE;
+        break;
+
+    case 14:
+        *bg_color = DNLF_YELLOW;
+        *fg_color = DNLF_BRIGHT_YELLOW;
+        break;
+
+    case 15:
+        *bg_color = DNLF_LIGHT_GRAY;
+        *fg_color = DNLF_WHITE;
+        break;
+    }
 }
