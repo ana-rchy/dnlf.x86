@@ -2,7 +2,7 @@
 #include "defines.h"
 
 typedef struct Player {
-    float y_pos;
+    float y;
     float y_speed;
     float y_accel;
     char head_char;

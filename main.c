@@ -68,13 +68,7 @@ void game_loop() {
 
     draw_level_to_screen(fg_color, bg_color, foreground, background_1, background_2);
     draw_particles(fg_color, bg_color, particles);
-
-    draw_char(player.head_char, PLAYER_X, player.y_pos, fg_color, bg_color);
-    if (player.invul_frames > 0) {
-        draw_char('@', PLAYER_X - 1, player.y_pos, fg_color, bg_color);
-    } else {
-        draw_char('#', PLAYER_X - 1, player.y_pos, fg_color, bg_color);
-    }
+    draw_player(fg_color, bg_color, &player);
 }
 
 void level_loop() {
