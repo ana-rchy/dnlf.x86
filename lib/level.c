@@ -16,6 +16,13 @@ void setup_layer(char chr, char layer[GRID_X * 2][GRID_Y]) {
         }
     }
 
+    for (int x = 0; x < GRID_X; x++) {
+        free(screen_1[x]);
+        free(screen_2[x]);
+    }
+    free(screen_1);
+    free(screen_2);
+
     add_rods(layer, chr);
 }
 
@@ -30,6 +37,11 @@ void extend_layer_if_needed(int stage, char chr, char layer[GRID_X * 2][GRID_Y])
             layer[GRID_X + x][y] = new_screen[x][y];
         }
     }
+
+    for (int x = 0; x < GRID_X; x++) {
+        free(new_screen[x]);
+    }
+    free(new_screen);
 
     add_rods(layer, chr);
 }

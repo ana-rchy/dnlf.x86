@@ -48,11 +48,9 @@ int main() {
         ClearBackground(bg_color);
 
         game_loop();
-        
-        timer += GetFrameTime();
-        stage = min(timer / STAGE_TIME, MAX_STAGE);
-        set_stage_colors(stage, &fg_color, &bg_color);
 
+        output_screen(fg_color, bg_color);
+        
         EndDrawing();
     }
 
@@ -63,12 +61,19 @@ int main() {
 
 void game_loop() {
     level_loop();
-    particles_loop();
-    update_player(&player, foreground);
 
-    draw_level_to_screen(fg_color, bg_color, foreground, background_1, background_2);
-    draw_particles(fg_color, bg_color, particles);
-    draw_player(fg_color, bg_color, &player);
+    draw_level(foreground, background_1, background_2);
+    draw_particles(particles);
+    draw_player(&player);
+
+    // yes this order is VERY intentional
+    // see: update_player comments and OG code ('game_loop()')
+    particles_loop();
+    update_player(&player, foreground, particles);
+
+    timer += GetFrameTime();
+    stage = min(timer / STAGE_TIME, MAX_STAGE);
+    set_stage_colors(stage, &fg_color, &bg_color);
 }
 
 void level_loop() {
