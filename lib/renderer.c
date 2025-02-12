@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <string.h>
 #include "renderer.h"
 #include "defines.h"
+#include <stdio.h>
+#include <string.h>
 
 Font font;
 

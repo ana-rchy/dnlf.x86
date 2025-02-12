@@ -1,12 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <raylib.h>
 #include "lib/defines.h"
 #include "lib/renderer.h"
 #include "lib/level.h"
 #include "lib/decorations.h"
 #include "lib/player.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <raylib.h>
 
 char foreground[GRID_X * 2][GRID_Y], background_1[GRID_X * 2][GRID_Y], background_2[GRID_X * 2][GRID_Y];
 float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow = 0;

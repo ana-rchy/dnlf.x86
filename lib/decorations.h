@@ -1,6 +1,6 @@
 #pragma once
-#include <raylib.h>
 #include "defines.h"
+#include <raylib.h>
 
 typedef struct particle {
     Vector2 pos;

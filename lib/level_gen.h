@@ -1,6 +1,6 @@
 #pragma once
-#include <stdbool.h>
 #include "defines.h"
+#include <stdbool.h>
 
 char** generate_blocks(int stage, char chr);
 char weird_texture_formula(int x, int y, int stage);

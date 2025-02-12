@@ -1,8 +1,8 @@
 #pragma once
-#include <raylib.h>
 #include "defines.h"
 #include "decorations.h"
 #include "player.h"
+#include <raylib.h>
 
 static char screen[GRID_X][GRID_Y];
 

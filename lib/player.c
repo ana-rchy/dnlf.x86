@@ -1,7 +1,7 @@
 #include "player.h"
-#include <raylib.h>
 #include "defines.h"
 #include "renderer.h"
+#include <raylib.h>
 #include <stdio.h>
 
 void reset_player(Player* player) {

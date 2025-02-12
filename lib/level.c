@@ -1,9 +1,9 @@
 #include "level.h"
+#include "level_gen.h"
+#include "decorations.h"
 #include <stdbool.h>
 #include <math.h>
 #include <raylib.h>
-#include "level_gen.h"
-#include "decorations.h"
 
 void setup_layer(char chr, char layer[GRID_X * 2][GRID_Y]) {
     char** screen_1 = generate_blocks(0, chr);

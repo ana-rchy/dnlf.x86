@@ -1,9 +1,9 @@
 #include "decorations.h"
+#include "defines.h"
 #include <raylib.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
-#include "defines.h"
 
 // TODO: make this function more readable jfc
 void add_rods(char layer[GRID_X * 2][GRID_Y], char chr) {
