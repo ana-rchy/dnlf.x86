@@ -41,8 +41,8 @@ void update_player(Player* player, Particle particles[MAX_PARTICLES]) {
                     (float) rand_range(-30, 30) / 20.0
                 },
                 (Vector2) { 0, PLAYER_Y_ACCEL },
-                (char[]) { DITHER_1, DITHER_2 },
-                0, // OG '1-2*rand()%2' always == 1, reverse chars, we get 0
+                (char[PARTICLE_STATES]) { DITHER_2, DITHER_1 },
+                0, // OG '1-2*rand()%2' always == 1, convert 1/-1 to 0/1, we get 0
                 3.0 / 60.0,
                 "invuln",
                 particles

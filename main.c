@@ -87,12 +87,23 @@ void level_loop() {
 void particles_loop() {
     update_particles(particles);
 
+    insert_new_particle(
+        (Vector2) { PLAYER_X, player.y },
+        (Vector2) { -scroll_speed, 0 },
+        (Vector2) { 0, 0 },
+        (char[PARTICLE_STATES]) { '+', '-' },
+        0,
+        10.0 / 60.0,
+        "player trail",
+        particles
+    );
+
     if (rand_range(1, 10) == 1) {
         insert_new_particle(
             (Vector2) { (float) GRID_X - 1, rand_range(0, GRID_Y - 1) },
             (Vector2) { -scroll_speed * rand_range(2, 4), 0 },
             (Vector2) { 0, 0 },
-            (char[PARTICLE_STATES]) { '*', '-' },
+            (char[PARTICLE_STATES]) { '-', '*' },
             0,
             rand_range(1, 10) / 60.0,
             "fly-by",
