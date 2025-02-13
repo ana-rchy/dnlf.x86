@@ -37,9 +37,9 @@ int main() {
     setup_renderer();
     srand(time(NULL));
 
-    setup_layer(FULL_BLOCK, foreground);
-    setup_layer(DITHER_1, background_1);
-    setup_layer(DITHER_3, background_2);
+    setup_layer(foreground, FULL_BLOCK, player.invul_frames);
+    setup_layer(background_1, DITHER_1, player.invul_frames);
+    setup_layer(background_2, DITHER_3, player.invul_frames);
 
     clear_particles(particles);
 
@@ -77,9 +77,9 @@ void game_loop() {
 }
 
 void level_loop() {
-    scroll_and_extend_layer(foreground, stage, FULL_BLOCK, scroll_speed, &fg_scroll_overflow);
-    scroll_and_extend_layer(background_1, stage, DITHER_1, scroll_speed / BG_1_PARALLAX_DIVIDER, &bg_1_scroll_overflow);
-    scroll_and_extend_layer(background_2, stage, DITHER_3, scroll_speed / BG_2_PARALLAX_DIVIDER, &bg_2_scroll_overflow);
+    scroll_and_extend_layer(foreground, stage, FULL_BLOCK, scroll_speed, &fg_scroll_overflow, player.invul_frames);
+    scroll_and_extend_layer(background_1, stage, DITHER_1, scroll_speed / BG_1_PARALLAX_DIVIDER, &bg_1_scroll_overflow, player.invul_frames);
+    scroll_and_extend_layer(background_2, stage, DITHER_3, scroll_speed / BG_2_PARALLAX_DIVIDER, &bg_2_scroll_overflow, player.invul_frames);
 
     scroll_speed += SCROLL_SPEED_ACCELERATION;
 }

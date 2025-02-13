@@ -3,7 +3,7 @@
 #include <raylib.h>
 
 // reimplementation of the 'geometry' function
-char** generate_blocks(int stage, char chr) {
+char** generate_blocks(int stage, char chr, int invul_frames) {
     // idk why this syntax works but sure
     char** new_screen = malloc(GRID_X * sizeof(char*));
     for (int x = 0; x < GRID_X; x++) {
@@ -44,7 +44,7 @@ char** generate_blocks(int stage, char chr) {
                 {
                     new_screen[rect_abs_x_pos + x][rect_abs_y_pos + y] = chr;
                 } else {
-                    new_screen[rect_abs_x_pos + x][rect_abs_y_pos + y] = weird_texture_formula(x, y, stage);
+                    new_screen[rect_abs_x_pos + x][rect_abs_y_pos + y] = weird_texture_formula(x, y, stage, -1);
                 }
            }
         }
@@ -86,7 +86,7 @@ char** generate_blocks(int stage, char chr) {
                     {
                         new_screen[rect_abs_x_pos + x][y] = chr;
                     } else {
-                        new_screen[rect_abs_x_pos + x][y] = weird_texture_formula(x, y, stage);
+                        new_screen[rect_abs_x_pos + x][y] = weird_texture_formula(x, y, stage, -1);
                     }
                 }
             }
@@ -102,8 +102,7 @@ char** generate_blocks(int stage, char chr) {
                     {
                         new_screen[rect_abs_x_pos + x][y] = chr;
                     } else {
-                        // TODO: og is 'm[l(i,j)] = (sin(j*(stage+1))*cos(i*iframes+1)*2+2)+220;', gotta put in iframes instead ig
-                        new_screen[rect_abs_x_pos + x][y] = weird_texture_formula(x, y, stage);
+                        new_screen[rect_abs_x_pos + x][y] = weird_texture_formula(x, y, stage, invul_frames);
                     }
                 }
             }
@@ -113,15 +112,23 @@ char** generate_blocks(int stage, char chr) {
     return new_screen;
 }
 
-char weird_texture_formula(int x, int y, int stage) {
+char weird_texture_formula(int x, int y, int stage, int invul_frames) {
     // the ANSI code for upper-half block is 224, but the formula never seems to actually go up to 224
     // but somehow in the og, that result DOESNT go to 223 when truncating, it goes to 224
     // whereas when i was testing it, it does (windows vs linux difference?)
     //
     // the issue is: i dont know at what threshold 223.xxxxx goes to 224 in the og
     // so im just gonna guess and make the threshold 223.9
+    //
+    // TODO: figure out how to do this accurately to the OG
     
-    float formula_result = ( sin(y * (stage+1)) * cos(x*x) * 2 ) + 2 + 220;
+    float formula_result;
+    if (invul_frames == -1) {
+        formula_result = ( sin(y * (stage+1)) * cos(x*x) * 2 ) + 2 + 220;
+    } else {
+        formula_result = ( sin(y * (stage+1)) * cos(x*invul_frames + 1) * 2 ) + 2 + 220;
+    }
+    
     if (formula_result > 223.9) {
         formula_result = 224.0;
     }
