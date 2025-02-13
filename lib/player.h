@@ -12,4 +12,4 @@ typedef struct Player {
 } Player;
 
 void reset_player(Player* player);
-void update_player(Player* player, char foreground[GRID_X * 2][GRID_Y], Particle particles[MAX_PARTICLES]);
+void update_player(Player* player, Particle particles[MAX_PARTICLES]);

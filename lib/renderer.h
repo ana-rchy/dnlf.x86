@@ -4,7 +4,7 @@
 #include "player.h"
 #include <raylib.h>
 
-static char screen[GRID_X][GRID_Y];
+extern char screen[GRID_X][GRID_Y];
 
 void setup_renderer();
 void draw_char(char c, int x, int y);

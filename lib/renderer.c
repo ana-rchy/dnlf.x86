@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+char screen[GRID_X][GRID_Y];
 Font font;
 
 void setup_renderer() {
@@ -30,6 +31,8 @@ void output_screen(Color fg_color, Color bg_color) {
             
             DrawRectangle(pos.x, pos.y, UNIT_X, UNIT_Y, bg_color);
             DrawTextEx(font, chr, pos, 12, 0, fg_color);
+
+            screen[x][y] = ' ';
         }
     }
 }

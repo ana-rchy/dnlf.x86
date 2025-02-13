@@ -1,4 +1,5 @@
 #include "player.h"
+#include "decorations.h"
 #include "defines.h"
 #include "renderer.h"
 #include <raylib.h>
@@ -28,22 +29,25 @@ void reset_player(Player* player) {
 //
 // as i am making this a 100% authentic port, this exact behaviour will be here too.
 // Too bad!
-void update_player(Player* player, char foreground[GRID_X * 2][GRID_Y], Particle particles[MAX_PARTICLES]) {
+void update_player(Player* player, Particle particles[MAX_PARTICLES]) {
     char in_front = screen[PLAYER_X + 1][(int) player->y];
+
     if (in_front >= FULL_BLOCK && in_front <= RIGHT_HALF) {
-        insert_new_particle(
-            (Vector2) { PLAYER_X - 1, player->y },
-            (Vector2) { 
-                (float) rand_range(-30, -1) / 20,
-                (float) rand_range(-30, 30) / 20
-            },
-            (Vector2) { 0, PLAYER_Y_ACCEL },
-            (char[]) { DITHER_1, DITHER_2 },
-            0, // OG '1-2*rand()%2' always == 1, reverse chars, we get 0
-            3.0 / 60.0,
-            "invuln",
-            particles
-        );
+        for (int i = 0; i < 3; i++) {
+            insert_new_particle(
+                (Vector2) { PLAYER_X - 1, player->y },
+                (Vector2) { 
+                    (float) rand_range(-30, -1) / 20.0,
+                    (float) rand_range(-30, 30) / 20.0
+                },
+                (Vector2) { 0, PLAYER_Y_ACCEL },
+                (char[]) { DITHER_1, DITHER_2 },
+                0, // OG '1-2*rand()%2' always == 1, reverse chars, we get 0
+                3.0 / 60.0,
+                "invuln",
+                particles
+            );
+        }
     }
     
     if (IsKeyPressed(KEY_UP)) {
@@ -52,8 +56,21 @@ void update_player(Player* player, char foreground[GRID_X * 2][GRID_Y], Particle
 
         player->head_char = player->head_char == 'v' ? '^' : 'v';
     }
+    
+    if (player->y_accel < 0) {
+        if (player->y > 0 && screen[PLAYER_X][(int) player->y - 1] != FULL_BLOCK) {
+            player->y_speed += player->y_accel;
+        } else {
+            player->y_speed = 0;
+        }
+    } else if (player->y_accel > 0) {
+        if (player->y < (float) GRID_Y - 1 && screen[PLAYER_X][(int) player->y + 1] != FULL_BLOCK) {
+            player->y_speed += player->y_accel;
+        } else {
+            player->y_speed = 0;
+        }
+    }
 
-    player->y_speed += player->y_accel;
     player->y += player->y_speed;
 
     float push_direction = (player->y < (float) GRID_Y / 2) ? 1 : -1;
@@ -62,40 +79,10 @@ void update_player(Player* player, char foreground[GRID_X * 2][GRID_Y], Particle
     // this of course is a bug. Too bad!
     //
     // overall this while loop causes the player to be pushed down/upwards until theres air, depending on push_direction
-    while (foreground[PLAYER_X][(int) player->y] == FULL_BLOCK ||
+    while (screen[PLAYER_X][(int) player->y] == FULL_BLOCK ||
            player->y < 0 || player->y >= (float) GRID_Y)
     {
         player->y += push_direction;
         player->y_speed = 0;
     }
-
-    /*if (player->y_accel < 0) {*/
-    /*    if (player->y > 0 && foreground[PLAYER_X][(int) player->y - 1] != FULL_BLOCK) {*/
-    /*        player->y_speed += player->y_accel;*/
-    /*    } else {*/
-    /*        player->y_speed = 0;*/
-    /*    }*/
-    /*}*/
-    /**/
-    /*if (player->y_accel > 0) {*/
-    /*    if (player->y < (float) GRID_Y - 1 && foreground[PLAYER_X][(int) player->y + 1] != FULL_BLOCK) {*/
-    /*        player->y_speed += player->y_accel;*/
-    /*    } else {*/
-    /*        player->y_speed = 0;*/
-    /*    }*/
-    /*}*/
-    /**/
-    /*player->y += player->y_speed;*/
-    /**/
-    /*if (player->y >= GRID_Y / 2)*/
-    /*    while (foreground[PLAYER_X][(int) player->y] == FULL_BLOCK || player->y >= GRID_Y) {*/
-    /*        player->y--;*/
-    /*        player->y_speed = 0;*/
-    /*    }*/
-    /**/
-    /*if (player->y < GRID_Y / 2)*/
-    /*    while (foreground[PLAYER_X][(int) player->y] == FULL_BLOCK || player->y < 0) {*/
-    /*        player->y++;*/
-    /*        player->y_speed = 0;*/
-    /*    }*/
 }

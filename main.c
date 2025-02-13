@@ -69,7 +69,7 @@ void game_loop() {
     // yes this order is VERY intentional
     // see: update_player comments and OG code ('game_loop()')
     particles_loop();
-    update_player(&player, foreground, particles);
+    update_player(&player, particles);
 
     timer += GetFrameTime();
     stage = min(timer / STAGE_TIME, MAX_STAGE);
