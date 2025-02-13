@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+// we need this for Special Physics (see: update_player)
 char screen[GRID_X][GRID_Y];
 Font font;
 
@@ -35,10 +36,6 @@ void output_screen(Color fg_color, Color bg_color) {
             screen[x][y] = ' ';
         }
     }
-}
-
-char** get_screen() {
-    return (char**) screen;
 }
 
 //////////////////////////////////////////////////////////////////

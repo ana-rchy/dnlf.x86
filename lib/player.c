@@ -14,20 +14,13 @@ void reset_player(Player* player) {
     player->invul_frames_max = 15;
 }
 
-// there is some wacky stuff that went down in the OG's version of this
-//
-// so: in the OG, it checked physics on the *display* layer
-// in physics() (player physics) it would draw particles if you were *about* to hit a wall
-//
-// draw_frame() would push particles onto the display layer
-// and in the game loop, draw_frame() ran before physics()
-//
-// without considering iframes or death, the player just gets snapped to the nearest wall/ceiling (see next comment)
-// so the only reason the player can go into walls in the OG,
-// is because the particles override where the player is about to be on the display layer,
-// and the physics checking from that layer, dont see FULL_BLOCK and are like "yep thats all good"
-//
-// as i am making this a 100% authentic port, this exact behaviour will be here too.
+// BUG:
+// in the OG, it checked physics on the *display* layer
+// specifically, the while loop checks what is on the players position on the screen
+// on the screen this is *usually* the player head char, '#' or '@'
+// this bug is what allows you to break through walls, as it sees #/@ rather than FULL_BLOCK
+// sometimes it doesnt see #/@ and then you move up/down a little while in a wall
+// ...also, particles can affect physics.
 // Too bad!
 void update_player(Player* player, Particle particles[MAX_PARTICLES]) {
     char in_front = screen[PLAYER_X + 1][(int) player->y];
@@ -75,10 +68,9 @@ void update_player(Player* player, Particle particles[MAX_PARTICLES]) {
 
     float push_direction = (player->y < (float) GRID_Y / 2) ? 1 : -1;
 
-    // OG only checks for FULL_BLOCK, so we also do the same,
-    // this of course is a bug. Too bad!
-    //
-    // overall this while loop causes the player to be pushed down/upwards until theres air, depending on push_direction
+    // BUG:
+    // OG only checks for FULL_BLOCK, so we do the same
+    // Too bad!
     while (screen[PLAYER_X][(int) player->y] == FULL_BLOCK ||
            player->y < 0 || player->y >= (float) GRID_Y)
     {

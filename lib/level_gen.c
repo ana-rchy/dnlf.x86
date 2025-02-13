@@ -126,6 +126,7 @@ char weird_texture_formula(int x, int y, int stage, int invul_frames) {
     if (invul_frames == -1) {
         formula_result = ( sin(y * (stage+1)) * cos(x*x) * 2 ) + 2 + 220;
     } else {
+        // dont ask me why iframes are used
         formula_result = ( sin(y * (stage+1)) * cos(x*invul_frames + 1) * 2 ) + 2 + 220;
     }
     
