@@ -150,7 +150,7 @@ void update_particles(Particle particles[MAX_PARTICLES]) {
             particles[i].pos.y < 0 || particles[i].pos.y >= (float) GRID_Y)
         {
             particles[i].group = "";
-            return;
+            continue;
         }
 
         particles[i].state_timer += GetFrameTime();
