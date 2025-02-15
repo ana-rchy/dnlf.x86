@@ -65,6 +65,11 @@
 #define PLAYER_START_Y (float) GRID_Y / 2
 #define PLAYER_Y_ACCEL 0.04
 
+#define NUM_FONT_X 5
+#define NUM_FONT_Y 5
+#define STAGE_FONT_X 9
+#define STAGE_FONT_Y 8
+
 
 #define min(a, b) ( (a < b) ? a : b )
 #define max(a, b) ( (a > b) ? a : b )

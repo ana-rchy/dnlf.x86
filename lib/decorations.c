@@ -110,7 +110,7 @@ void insert_new_particle(Vector2 pos,
 {
     int free_index = -1;
     for (int i = 0; i < MAX_PARTICLES; i++) {
-        if (strcmp(particles[i].group, "") == 0) {
+        if (TextIsEqual(particles[i].group, "")) {
             free_index = i;
             break;
         }
@@ -134,7 +134,7 @@ void insert_new_particle(Vector2 pos,
 
 void update_particles(Particle particles[MAX_PARTICLES]) {
     for (int i = 0; i < MAX_PARTICLES; i++) {
-        if (strcmp(particles[i].group, "") == 0) {
+        if (TextIsEqual(particles[i].group, "")) {
             continue;
         }
 

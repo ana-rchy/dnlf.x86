@@ -8,7 +8,10 @@
 #include <time.h>
 #include <raylib.h>
 
-char foreground[GRID_X * 2][GRID_Y], background_1[GRID_X * 2][GRID_Y], background_2[GRID_X * 2][GRID_Y];
+char foreground[GRID_X * 2][GRID_Y],
+     background_1[GRID_X * 2][GRID_Y],
+     background_2[GRID_X * 2][GRID_Y],
+     ui[GRID_X][GRID_Y];
 float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow = 0;
 
 int stage = 0;

@@ -1,5 +1,6 @@
 #include "renderer.h"
 #include "defines.h"
+#include <raylib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -58,7 +59,7 @@ void draw_level(char foreground[GRID_X * 2][GRID_Y], char background_1[GRID_X * 
 
 void draw_particles(Particle particles[MAX_PARTICLES]) {
     for (int i = 0; i < MAX_PARTICLES; i++) {
-        if (strcmp(particles[i].group, "") == 0) {
+        if (TextIsEqual(particles[i].group, "")) {
             continue;
         }
 
