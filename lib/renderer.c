@@ -78,3 +78,13 @@ void draw_player(Player* player) {
         draw_char('#', PLAYER_X, player->y);
     }
 }
+
+void draw_num_font(bool* text, int x_length, int x_abs, int y_abs) {
+    for (int y = 0; y < NUM_FONT_Y; y++) {
+        for (int x = 0; x < x_length; x++) {
+            if ( *(text + y*x_length + x) == true ) {
+                draw_char(DITHER_2, x_abs + x, y_abs + y);
+            }
+        }
+    }
+}

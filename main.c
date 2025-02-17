@@ -3,6 +3,7 @@
 #include "lib/level.h"
 #include "lib/decorations.h"
 #include "lib/player.h"
+#include "lib/ui.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -68,6 +69,7 @@ void game_loop() {
     draw_level(foreground, background_1, background_2);
     draw_particles(particles);
     draw_player(&player);
+    draw_num_font((bool*) STAGE_FONT_STAGE_TEXT, STAGE_FONT_X * 5 + 4, 0, 0);
 
     // yes this order is VERY intentional
     // see: update_player comments and OG code ('game_loop()')
