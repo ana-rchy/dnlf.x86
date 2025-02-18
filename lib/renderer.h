@@ -13,4 +13,5 @@ void output_screen(Color fg_color, Color bg_color);
 void draw_level(char foreground[GRID_X * 2][GRID_Y], char background_1[GRID_X * 2][GRID_Y], char background_2[GRID_X * 2][GRID_Y]);
 void draw_particles(Particle particles[MAX_PARTICLES]);
 void draw_player(Player* player);
-void draw_num_font(bool* text, int x_length, int x_abs, int y_abs);
+void draw_ui_num(int score, int origin_x, int origin_y);
+void draw_invul_frames(int iframes, int iframes_max);

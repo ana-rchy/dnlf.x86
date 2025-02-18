@@ -69,7 +69,8 @@ void game_loop() {
     draw_level(foreground, background_1, background_2);
     draw_particles(particles);
     draw_player(&player);
-    draw_num_font((bool*) STAGE_FONT_STAGE_TEXT, STAGE_FONT_X * 5 + 4, 0, 0);
+    draw_ui_num(55271903, SCORE_X_POS, SCORE_Y_POS);
+    draw_invul_frames(8, 15);
 
     // yes this order is VERY intentional
     // see: update_player comments and OG code ('game_loop()')

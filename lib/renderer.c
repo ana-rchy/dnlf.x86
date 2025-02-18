@@ -1,8 +1,9 @@
 #include "renderer.h"
 #include "defines.h"
+#include "ui.h"
 #include <raylib.h>
 #include <stdio.h>
-#include <string.h>
+#include <math.h>
 
 // we need this for Special Physics (see: update_player)
 char screen[GRID_X][GRID_Y];
@@ -79,12 +80,52 @@ void draw_player(Player* player) {
     }
 }
 
-void draw_num_font(bool* text, int x_length, int x_abs, int y_abs) {
+void draw_ui_num(int num, int origin_x, int origin_y) {
+    int digits_count;
+    if (num > 0) {
+        digits_count = (int) log10(num) + 1;
+    } else {
+        digits_count = 1;
+    }
+
+    int start_x = origin_x + 6*(digits_count - 1);
+
+    for (int i = 1; i <= digits_count; i++) {
+        bool* font_char = int_to_num_font(num % 10);
+
+        for (int y = 0; y < NUM_FONT_Y; y++) {
+            for (int x = 0; x < NUM_FONT_X; x++) {
+                if ( *(font_char + y*NUM_FONT_X + x) == true ) {
+                    draw_char(DITHER_2, start_x + x, origin_y + y);
+                }
+            }
+        }
+
+        start_x -= 6;
+        num /= 10;
+    }
+}
+
+void draw_invul_frames(int iframes, int iframes_max) {
+    if (iframes < 0) {
+        printf("draw_invul_frames: iframes less than 0");
+        return;
+    }
+
+    if (iframes >= 10) {
+        draw_ui_num(iframes, INVUL_FRAMES_X_POS, INVUL_FRAMES_Y_POS);
+    } else {
+        draw_ui_num(0, INVUL_FRAMES_X_POS, INVUL_FRAMES_Y_POS);
+        draw_ui_num(iframes, INVUL_FRAMES_X_POS + 6, INVUL_FRAMES_Y_POS);
+    }
+
     for (int y = 0; y < NUM_FONT_Y; y++) {
-        for (int x = 0; x < x_length; x++) {
-            if ( *(text + y*x_length + x) == true ) {
-                draw_char(DITHER_2, x_abs + x, y_abs + y);
+        for (int x = 0; x < NUM_FONT_X; x++) {
+            if (NUM_FONT_SLASH[y][x] == true) {
+                draw_char(DITHER_2, INVUL_FRAMES_X_POS + 6*2 + x, INVUL_FRAMES_Y_POS + y);
             }
         }
     }
+
+    draw_ui_num(iframes_max, INVUL_FRAMES_X_POS + 6*3, INVUL_FRAMES_Y_POS);
 }

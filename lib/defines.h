@@ -70,6 +70,11 @@
 #define STAGE_FONT_X 9
 #define STAGE_FONT_Y 8
 
+#define SCORE_X_POS 1
+#define SCORE_Y_POS 1
+#define INVUL_FRAMES_X_POS 1
+#define INVUL_FRAMES_Y_POS GRID_Y - 1 - NUM_FONT_Y
+
 
 #define min(a, b) ( (a < b) ? a : b )
 #define max(a, b) ( (a > b) ? a : b )
