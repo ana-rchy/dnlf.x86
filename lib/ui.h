@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 bool* int_to_num_font(int num);
+bool* int_to_stage_font(int num);
 
 static const bool NUM_FONT_0[NUM_FONT_Y][NUM_FONT_X] = {
     {1,1,1,1,1},

@@ -129,3 +129,23 @@ void draw_invul_frames(int iframes, int iframes_max) {
 
     draw_ui_num(iframes_max, INVUL_FRAMES_X_POS + 6*3, INVUL_FRAMES_Y_POS);
 }
+
+void draw_stage_text(int stage, char texture_char) {
+    bool* font_char = int_to_stage_font(stage);
+
+    for (int y = 0; y < STAGE_FONT_Y; y++) {
+        for (int x = 0; x < STAGE_FONT_X * 5 + 4; x++) {
+            if (STAGE_FONT_STAGE_TEXT[y][x] == true) {
+                draw_char(texture_char, STAGE_TEXT_X_POS + x, STAGE_TEXT_Y_POS + y);
+            }
+        }
+    }
+
+    for (int y = 0; y < STAGE_FONT_Y; y++) {
+        for (int x = 0; x < STAGE_FONT_X; x++) {
+            if ( *(font_char + y*STAGE_FONT_X + x) == true ) {
+                draw_char(texture_char, STAGE_CHAR_X_POS + x, STAGE_CHAR_Y_POS + y);
+            }
+        }
+    }
+}

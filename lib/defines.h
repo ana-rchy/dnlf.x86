@@ -74,6 +74,10 @@
 #define SCORE_Y_POS 1
 #define INVUL_FRAMES_X_POS 1
 #define INVUL_FRAMES_Y_POS GRID_Y - 1 - NUM_FONT_Y
+#define STAGE_CHAR_X_POS GRID_X - 1 - STAGE_FONT_X
+#define STAGE_CHAR_Y_POS GRID_Y - 1 - STAGE_FONT_Y
+#define STAGE_TEXT_X_POS STAGE_CHAR_X_POS - STAGE_FONT_X*5 - 4 - 2
+#define STAGE_TEXT_Y_POS STAGE_CHAR_Y_POS
 
 
 #define min(a, b) ( (a < b) ? a : b )
