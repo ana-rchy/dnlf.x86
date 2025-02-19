@@ -18,7 +18,9 @@ float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow = 0;
 
 int stage = 0;
 float time_since_game_start = 0;
+
 float scroll_speed = 1;
+float total_distance = 0;
 
 Color bg_color = DNLF_WHITE;
 Color fg_color = DNLF_BLACK;
@@ -68,29 +70,32 @@ int main() {
 //////////////////////////////////////////////////////////////////
 
 void game_loop() {
-    level_loop();
-    stage_loop();
-
     draw_level(foreground, background_1, background_2);
     draw_particles(particles);
     draw_player(&player);
-    draw_ui_num(player.score, SCORE_X_POS, SCORE_Y_POS);
-    draw_invul_frames(8, 15);
+    draw_invul_frames(player.invul_frames, player.invul_frames_max);
+    if (player.score > 0) {
+        draw_ui_num(player.score, SCORE_X_POS, SCORE_Y_POS);
+    }
+
+    level_loop();
+    stage_loop();
 
     // yes this order is VERY intentional
     // see: update_player comments and OG code ('game_loop()')
     particles_loop();
-    update_player(&player, particles);
+    update_player(&player, particles, total_distance);
 }
 
 //////////////////////////////////////////////////////////////////
 
 void level_loop() {
+    total_distance += scroll_speed;
+    scroll_speed += SCROLL_SPEED_ACCELERATION;
+
     scroll_and_extend_layer(foreground, stage, FULL_BLOCK, scroll_speed, &fg_scroll_overflow, player.invul_frames);
     scroll_and_extend_layer(background_1, stage, DITHER_1, scroll_speed / BG_1_PARALLAX_DIVIDER, &bg_1_scroll_overflow, player.invul_frames);
     scroll_and_extend_layer(background_2, stage, DITHER_3, scroll_speed / BG_2_PARALLAX_DIVIDER, &bg_2_scroll_overflow, player.invul_frames);
-
-    scroll_speed += SCROLL_SPEED_ACCELERATION;
 }
 
 void particles_loop() {
@@ -135,5 +140,9 @@ void stage_loop() {
         } else {
             draw_stage_text(stage, DITHER_2);
         }
+    }
+
+    if (time_since_current_stage < 1.0 / 60.0 && stage > 0) {
+        player.score += 2500;
     }
 }

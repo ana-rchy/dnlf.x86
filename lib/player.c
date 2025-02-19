@@ -23,7 +23,7 @@ void reset_player(Player* player) {
 // sometimes it doesnt see #/@ and then you move up/down a little while in a wall
 // ...also, particles can affect physics.
 // Too bad!
-void update_player(Player* player, Particle particles[MAX_PARTICLES]) {
+void update_player(Player* player, Particle particles[MAX_PARTICLES], float total_distance) {
     char in_front = screen[PLAYER_X + 1][(int) player->y];
 
     if (in_front >= FULL_BLOCK && in_front <= RIGHT_HALF) {
@@ -55,8 +55,9 @@ void update_player(Player* player, Particle particles[MAX_PARTICLES]) {
         } else {
             player->y_speed = 0;
 
-            // TODO: only add points if total distance travelled is more than 48 units
-            player->score += 10;
+            if (total_distance > 48) {
+                player->score += 10;
+            }
         }
     } else if (player->y_accel > 0) {
         if (player->y < (float) GRID_Y - 1 && screen[PLAYER_X][(int) player->y + 1] != FULL_BLOCK) {
@@ -64,8 +65,9 @@ void update_player(Player* player, Particle particles[MAX_PARTICLES]) {
         } else {
             player->y_speed = 0;
 
-            // TODO: only add points if total distance travelled is more than 48 units
-            player->score += 10;
+            if (total_distance > 48) {
+                player->score += 10;
+            }
         }
     }
 
