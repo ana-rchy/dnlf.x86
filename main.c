@@ -3,6 +3,7 @@
 #include "lib/level.h"
 #include "lib/decorations.h"
 #include "lib/player.h"
+#include "lib/stage.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -28,11 +29,10 @@ Player player = {};
 
 
 void game_loop();
+
 void level_loop();
 void particles_loop();
-void player_loop();
-
-void set_stage_colors(int stage, Color* fg_color, Color* bg_color);
+void stage_loop();
 
 
 int main() {
@@ -65,8 +65,11 @@ int main() {
     return 0;
 }
 
+//////////////////////////////////////////////////////////////////
+
 void game_loop() {
     level_loop();
+    stage_loop();
 
     draw_level(foreground, background_1, background_2);
     draw_particles(particles);
@@ -74,25 +77,13 @@ void game_loop() {
     draw_ui_num(player.score, SCORE_X_POS, SCORE_Y_POS);
     draw_invul_frames(8, 15);
 
-    time_since_game_start += GetFrameTime();
-    stage = min(time_since_game_start / STAGE_TIME, MAX_STAGE);
-    set_stage_colors(stage, &fg_color, &bg_color);
-    
-    float time_since_current_stage = time_since_game_start - stage*STAGE_TIME;
-
-    if (time_since_current_stage <= STAGE_TEXT_VISIBLE_TIME && stage > 0) {
-        if (fmod(time_since_current_stage, STAGE_TEXT_CHAR_PERIOD) < STAGE_TEXT_CHAR_PERIOD / 2) {
-            draw_stage_text(stage, FULL_BLOCK);
-        } else {
-            draw_stage_text(stage, DITHER_2);
-        }
-    }
-
     // yes this order is VERY intentional
     // see: update_player comments and OG code ('game_loop()')
     particles_loop();
     update_player(&player, particles);
 }
+
+//////////////////////////////////////////////////////////////////
 
 void level_loop() {
     scroll_and_extend_layer(foreground, stage, FULL_BLOCK, scroll_speed, &fg_scroll_overflow, player.invul_frames);
@@ -130,76 +121,19 @@ void particles_loop() {
     }
 }
 
-//////////////////////////////////////////////////////////////////
+void stage_loop() {
+    time_since_game_start += GetFrameTime();
+    stage = min(time_since_game_start / STAGE_TIME, MAX_STAGE);
 
-void set_stage_colors(int stage, Color* fg_color, Color* bg_color) {
-    switch (stage) {
-    case 1:
-        *fg_color = DNLF_BLUE;
-        break;
+    set_stage_colors(stage, &fg_color, &bg_color);
+    
+    float time_since_current_stage = time_since_game_start - stage*STAGE_TIME;
 
-    case 2:
-        *fg_color = DNLF_GREEN;
-        break;
-
-    case 3:
-        *fg_color = DNLF_CYAN;
-        break;
-
-    case 4:
-        *fg_color = DNLF_RED;
-        break;
-
-    case 5:
-        *fg_color = DNLF_PURPLE;
-        break;
-
-    case 6:
-        *fg_color = DNLF_YELLOW;
-        break;
-
-    case 7:
-        *fg_color = DNLF_LIGHT_GRAY;
-        break;
-
-    case 8:
-        *bg_color = DNLF_BLACK;
-        *fg_color = DNLF_DARK_GRAY;
-        break;
-
-    case 9:
-        *bg_color = DNLF_BLUE;
-        *fg_color = DNLF_BRIGHT_BLUE;
-        break;
-
-    case 10:
-        *bg_color = DNLF_GREEN;
-        *fg_color = DNLF_BRIGHT_GREEN;
-        break;
-
-    case 11:
-        *bg_color = DNLF_CYAN;
-        *fg_color = DNLF_BRIGHT_CYAN;
-        break;
-
-    case 12:
-        *bg_color = DNLF_RED;
-        *fg_color = DNLF_BRIGHT_RED;
-        break;
-
-    case 13:
-        *bg_color = DNLF_PURPLE;
-        *fg_color = DNLF_BRIGHT_PURPLE;
-        break;
-
-    case 14:
-        *bg_color = DNLF_YELLOW;
-        *fg_color = DNLF_BRIGHT_YELLOW;
-        break;
-
-    case 15:
-        *bg_color = DNLF_LIGHT_GRAY;
-        *fg_color = DNLF_WHITE;
-        break;
+    if (time_since_current_stage <= STAGE_TEXT_VISIBLE_TIME && stage > 0) {
+        if (fmod(time_since_current_stage, STAGE_TEXT_CHAR_PERIOD) < STAGE_TEXT_CHAR_PERIOD / 2) {
+            draw_stage_text(stage, FULL_BLOCK);
+        } else {
+            draw_stage_text(stage, DITHER_2);
+        }
     }
 }
