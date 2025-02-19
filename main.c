@@ -84,7 +84,7 @@ void game_loop() {
     // yes this order is VERY intentional
     // see: update_player comments and OG code ('game_loop()')
     particles_loop();
-    update_player(&player, particles, total_distance);
+    update_player(&player, particles, total_distance, stage);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -131,6 +131,7 @@ void stage_loop() {
     stage = min(time_since_game_start / STAGE_TIME, MAX_STAGE);
 
     set_stage_colors(stage, &fg_color, &bg_color);
+    set_invul_frames_max(stage, &player.invul_frames_max);
     
     float time_since_current_stage = time_since_game_start - stage*STAGE_TIME;
 
@@ -144,5 +145,6 @@ void stage_loop() {
 
     if (time_since_current_stage < 1.0 / 60.0 && stage > 0) {
         player.score += 2500;
+        player.invul_frames = min(player.invul_frames + 10, player.invul_frames_max);
     }
 }

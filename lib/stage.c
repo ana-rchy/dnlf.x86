@@ -72,3 +72,20 @@ void set_stage_colors(int stage, Color* fg_color, Color* bg_color) {
         break;
     }
 }
+
+void set_invul_frames_max(int stage, int* iframes_max) {
+    switch (stage) {
+    case 4:
+        *iframes_max = 30;
+        break;
+
+    case 8:
+        *iframes_max = 45;
+        break;
+
+    case 12:
+        *iframes_max = 60;
+        break;
+
+    }
+}

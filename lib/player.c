@@ -23,24 +23,30 @@ void reset_player(Player* player) {
 // sometimes it doesnt see #/@ and then you move up/down a little while in a wall
 // ...also, particles can affect physics.
 // Too bad!
-void update_player(Player* player, Particle particles[MAX_PARTICLES], float total_distance) {
+void update_player(Player* player, Particle particles[MAX_PARTICLES], float total_distance, int stage) {
     char in_front = screen[PLAYER_X + 1][(int) player->y];
 
     if (in_front >= FULL_BLOCK && in_front <= RIGHT_HALF) {
-        for (int i = 0; i < 3; i++) {
-            insert_new_particle(
-                (Vector2) { PLAYER_X - 1, player->y },
-                (Vector2) { 
-                    (float) rand_range(-30, -1) / 20.0,
-                    (float) rand_range(-30, 30) / 20.0
-                },
-                (Vector2) { 0, PLAYER_Y_ACCEL },
-                (char[PARTICLE_STATES]) { DITHER_2, DITHER_1 },
-                0, // OG '1-2*rand()%2' always == 1, convert 1/-1 to 0/1, we get 0
-                3.0 / 60.0,
-                "invuln",
-                particles
-            );
+        if (player->invul_frames == 0) {
+
+        } else {
+            player->invul_frames--;
+
+            for (int i = 0; i < 3; i++) {
+                insert_new_particle(
+                    (Vector2) { PLAYER_X - 1, player->y },
+                    (Vector2) { 
+                        (float) rand_range(-30, -1) / 20.0,
+                        (float) rand_range(-30, 30) / 20.0
+                    },
+                    (Vector2) { 0, PLAYER_Y_ACCEL },
+                    (char[PARTICLE_STATES]) { DITHER_2, DITHER_1 },
+                    0, // OG '1-2*rand()%2' always == 1, convert 1/-1 to 0/1, we get 0
+                    3.0 / 60.0,
+                    "invuln",
+                    particles
+                );
+            }
         }
     }
     
@@ -57,6 +63,10 @@ void update_player(Player* player, Particle particles[MAX_PARTICLES], float tota
 
             if (total_distance > 48) {
                 player->score += 10;
+
+                if (player->score % 250 == 0) {
+                    player->invul_frames = min(player->invul_frames + 1, player->invul_frames_max);
+                }
             }
         }
     } else if (player->y_accel > 0) {
@@ -67,6 +77,16 @@ void update_player(Player* player, Particle particles[MAX_PARTICLES], float tota
 
             if (total_distance > 48) {
                 player->score += 10;
+                
+                // NOTE:
+                // in the OG, it had this be only from stage 7 onwards,
+                // and % 125 afterwards
+                // but you only ever gain minimum 10 points. so,
+                // 125 is redundant and is the same as % 250
+                // Too bad!
+                if (player->score % 250 == 0) {
+                    player->invul_frames = min(player->invul_frames + 1, player->invul_frames_max);
+                }
             }
         }
     }
