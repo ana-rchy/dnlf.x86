@@ -3,10 +3,10 @@
 #include "lib/level.h"
 #include "lib/decorations.h"
 #include "lib/player.h"
-#include "lib/ui.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 #include <raylib.h>
 
 char foreground[GRID_X * 2][GRID_Y],
@@ -16,7 +16,7 @@ char foreground[GRID_X * 2][GRID_Y],
 float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow = 0;
 
 int stage = 0;
-float timer = 0;
+float time_since_game_start = 0;
 float scroll_speed = 1;
 
 Color bg_color = DNLF_WHITE;
@@ -24,7 +24,7 @@ Color fg_color = DNLF_BLACK;
 
 Particle particles[MAX_PARTICLES];
 
-Player player = { GRID_Y / 2, 0, 0.04, 'v', 0, 15 };
+Player player = {};
 
 
 void game_loop();
@@ -44,6 +44,8 @@ int main() {
     setup_layer(foreground, FULL_BLOCK, player.invul_frames);
     setup_layer(background_1, DITHER_1, player.invul_frames);
     setup_layer(background_2, DITHER_3, player.invul_frames);
+
+    reset_player(&player);
 
     clear_particles(particles);
 
@@ -69,18 +71,27 @@ void game_loop() {
     draw_level(foreground, background_1, background_2);
     draw_particles(particles);
     draw_player(&player);
-    draw_ui_num(55271903, SCORE_X_POS, SCORE_Y_POS);
+    draw_ui_num(player.score, SCORE_X_POS, SCORE_Y_POS);
     draw_invul_frames(8, 15);
-    draw_stage_text(10, DITHER_2);
+
+    time_since_game_start += GetFrameTime();
+    stage = min(time_since_game_start / STAGE_TIME, MAX_STAGE);
+    set_stage_colors(stage, &fg_color, &bg_color);
+    
+    float time_since_current_stage = time_since_game_start - stage*STAGE_TIME;
+
+    if (time_since_current_stage <= STAGE_TEXT_VISIBLE_TIME && stage > 0) {
+        if (fmod(time_since_current_stage, STAGE_TEXT_CHAR_PERIOD) < STAGE_TEXT_CHAR_PERIOD / 2) {
+            draw_stage_text(stage, FULL_BLOCK);
+        } else {
+            draw_stage_text(stage, DITHER_2);
+        }
+    }
 
     // yes this order is VERY intentional
     // see: update_player comments and OG code ('game_loop()')
     particles_loop();
     update_player(&player, particles);
-
-    timer += GetFrameTime();
-    stage = min(timer / STAGE_TIME, MAX_STAGE);
-    set_stage_colors(stage, &fg_color, &bg_color);
 }
 
 void level_loop() {

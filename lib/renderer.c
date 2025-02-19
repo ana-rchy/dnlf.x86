@@ -71,7 +71,11 @@ void draw_particles(Particle particles[MAX_PARTICLES]) {
 }
 
 void draw_player(Player* player) {
-    draw_char(player->head_char, PLAYER_X - 1, player->y);
+    if (player->y_accel < 0) {
+        draw_char('^', PLAYER_X - 1, player->y);
+    } else {
+        draw_char('v', PLAYER_X - 1, player->y);
+    }
 
     if (player->invul_frames > 0) {
         draw_char('@', PLAYER_X, player->y);

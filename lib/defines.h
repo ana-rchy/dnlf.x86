@@ -79,6 +79,9 @@
 #define STAGE_TEXT_X_POS STAGE_CHAR_X_POS - STAGE_FONT_X*5 - 4 - 2
 #define STAGE_TEXT_Y_POS STAGE_CHAR_Y_POS
 
+#define STAGE_TEXT_VISIBLE_TIME 30.0 / 60.0
+#define STAGE_TEXT_CHAR_PERIOD 2.0 / 30.0
+
 
 #define min(a, b) ( (a < b) ? a : b )
 #define max(a, b) ( (a > b) ? a : b )

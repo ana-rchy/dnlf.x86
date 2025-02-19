@@ -12,6 +12,7 @@ void reset_player(Player* player) {
     // in OG, char is set to 'v' only on init, not on reset
     player->invul_frames = 0;
     player->invul_frames_max = 15;
+    player->score = 0;
 }
 
 // BUG:
@@ -46,8 +47,6 @@ void update_player(Player* player, Particle particles[MAX_PARTICLES]) {
     if (IsKeyPressed(KEY_UP)) {
         player->y_accel = -player->y_accel;
         player->y_speed = player->y_speed / 2;
-
-        player->head_char = player->head_char == 'v' ? '^' : 'v';
     }
     
     if (player->y_accel < 0) {
@@ -55,12 +54,18 @@ void update_player(Player* player, Particle particles[MAX_PARTICLES]) {
             player->y_speed += player->y_accel;
         } else {
             player->y_speed = 0;
+
+            // TODO: only add points if total distance travelled is more than 48 units
+            player->score += 10;
         }
     } else if (player->y_accel > 0) {
         if (player->y < (float) GRID_Y - 1 && screen[PLAYER_X][(int) player->y + 1] != FULL_BLOCK) {
             player->y_speed += player->y_accel;
         } else {
             player->y_speed = 0;
+
+            // TODO: only add points if total distance travelled is more than 48 units
+            player->score += 10;
         }
     }
 
