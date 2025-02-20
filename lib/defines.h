@@ -87,3 +87,10 @@
 #define max(a, b) ( (a > b) ? a : b )
 #define clamp(val, min_val, max_val) ( max(min(val, max_val), min_val) )
 #define rand_range(min, max) ( (rand() % (max - min + 1)) + min )
+
+
+typedef enum GameState {
+    Menu,
+    Ingame,
+    Dead,
+} GameState;

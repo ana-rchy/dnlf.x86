@@ -10,9 +10,11 @@ run-debug: debug
 
 
 main: main.c
+	mkdir -p output
 	$(CC) main.c lib/*.c -l raylib -l m -Wall -o output/main
 
 debug: main.c
+	mkdir -p output
 	$(CC) main.c lib/*.c -l raylib -l m -Wall -g -fsanitize=undefined -o output/main
 
 clean:

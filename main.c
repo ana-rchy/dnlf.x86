@@ -10,6 +10,9 @@
 #include <math.h>
 #include <raylib.h>
 
+GameState game_state = Ingame;
+
+
 char foreground[GRID_X * 2][GRID_Y],
      background_1[GRID_X * 2][GRID_Y],
      background_2[GRID_X * 2][GRID_Y],
@@ -22,6 +25,7 @@ float time_since_game_start = 0;
 float scroll_speed = 1;
 float total_distance = 0;
 
+
 Color bg_color = DNLF_WHITE;
 Color fg_color = DNLF_BLACK;
 
@@ -30,11 +34,14 @@ Particle particles[MAX_PARTICLES];
 Player player = {};
 
 
+void menu_loop();
 void game_loop();
+void death_loop();
 
 void level_loop();
 void particles_loop();
 void stage_loop();
+
 
 
 int main() {
@@ -54,11 +61,18 @@ int main() {
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(bg_color);
+        
+        switch (game_state) {
+        case Ingame:
+            game_loop();
+            break;
 
-        game_loop();
+        case Dead:
+            death_loop();
+            break;
+        }
 
         output_screen(fg_color, bg_color);
-        
         EndDrawing();
     }
 
@@ -84,7 +98,16 @@ void game_loop() {
     // yes this order is VERY intentional
     // see: update_player comments and OG code ('game_loop()')
     particles_loop();
-    update_player(&player, particles, total_distance, stage);
+    update_player(&player, particles, total_distance, &game_state);
+}
+
+void death_loop() {
+    draw_level(foreground, background_1, background_2);
+    draw_particles(particles);
+    draw_invul_frames(player.invul_frames, player.invul_frames_max);
+    if (player.score > 0) {
+        draw_ui_num(player.score, SCORE_X_POS, SCORE_Y_POS);
+    }
 }
 
 //////////////////////////////////////////////////////////////////
