@@ -11,6 +11,8 @@
 #include <raylib.h>
 
 GameState game_state = Ingame;
+bool run_game_init = true;
+bool run_death_init = true;
 
 
 char foreground[GRID_X * 2][GRID_Y],
@@ -35,7 +37,9 @@ Player player = {};
 
 
 void menu_loop();
+void game_init();
 void game_loop();
+void death_init();
 void death_loop();
 
 void level_loop();
@@ -50,24 +54,24 @@ int main() {
     setup_renderer();
     srand(time(NULL));
 
-    setup_layer(foreground, FULL_BLOCK, player.invul_frames);
-    setup_layer(background_1, DITHER_1, player.invul_frames);
-    setup_layer(background_2, DITHER_3, player.invul_frames);
-
-    reset_player(&player);
-
-    clear_particles(particles);
-
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(bg_color);
         
         switch (game_state) {
         case Ingame:
+            if (run_game_init) {
+                game_init();
+            }
+
             game_loop();
             break;
 
         case Dead:
+             if (run_death_init) {
+                death_init();
+            }
+
             death_loop();
             break;
         }
@@ -83,7 +87,32 @@ int main() {
 
 //////////////////////////////////////////////////////////////////
 
+void game_init() {
+    run_death_init = true;
+
+    fg_scroll_overflow = bg_1_scroll_overflow = bg_2_scroll_overflow = 0;
+
+    stage = 0;
+    time_since_game_start = 0;
+
+    scroll_speed = 1;
+    total_distance = 0;
+
+    bg_color = DNLF_WHITE;
+    fg_color = DNLF_BLACK;
+
+    setup_layer(foreground, FULL_BLOCK, player.invul_frames);
+    setup_layer(background_1, DITHER_1, player.invul_frames);
+    setup_layer(background_2, DITHER_3, player.invul_frames);
+
+    reset_player(&player);
+
+    clear_particles(particles);
+}
+
 void game_loop() {
+    run_game_init = false;
+
     draw_level(foreground, background_1, background_2);
     draw_particles(particles);
     draw_player(&player);
@@ -101,12 +130,49 @@ void game_loop() {
     update_player(&player, particles, total_distance, &game_state);
 }
 
+void death_init() {
+    run_game_init = true;
+
+    for (int i = 0; i < 20; i++) {
+        insert_new_particle(
+            (Vector2) { PLAYER_X, player.y },
+            (Vector2) {
+                (float) rand_range(-30, 30) / 20,
+                (float) rand_range(-30, 30) / 20
+            },
+            (Vector2) { 0, PLAYER_Y_ACCEL },
+            (char[PARTICLE_STATES]) { '|', '-' },
+            0,
+            3,
+            "death",
+            particles
+        );
+    }
+
+    for (int i = 0; i < MAX_PARTICLES; i++) {
+        if (TextIsEqual(particles[i].group, "player trail")) {
+            particles[i].speed = (Vector2) {
+                (float) rand_range(-30, 0) / 20,
+                (float) rand_range(-30, 30) / 20
+            };
+        }
+    }
+}
+
 void death_loop() {
+    run_death_init = false;
+
     draw_level(foreground, background_1, background_2);
     draw_particles(particles);
     draw_invul_frames(player.invul_frames, player.invul_frames_max);
     if (player.score > 0) {
         draw_ui_num(player.score, SCORE_X_POS, SCORE_Y_POS);
+    }
+
+    update_particles(particles);
+
+    if (IsKeyPressed(KEY_SPACE)) {
+        game_state = Ingame;
     }
 }
 
