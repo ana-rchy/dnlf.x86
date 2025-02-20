@@ -3,7 +3,6 @@
 #include "defines.h"
 #include "renderer.h"
 #include <raylib.h>
-#include <stdio.h>
 
 void reset_player(Player* player) {
     player->y = PLAYER_START_Y;

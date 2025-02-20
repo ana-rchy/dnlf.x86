@@ -1,6 +1,7 @@
 #pragma once
 #include "defines.h"
 #include "decorations.h"
+#include "game.h"
 
 typedef struct Player {
     float y;
