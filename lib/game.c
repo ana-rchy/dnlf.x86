@@ -76,9 +76,9 @@ void ingame_init() {
     bg_color = DNLF_WHITE;
     fg_color = DNLF_BLACK;
 
-    setup_layer(foreground, FULL_BLOCK, player.invul_frames);
-    setup_layer(background_1, DITHER_1, player.invul_frames);
-    setup_layer(background_2, DITHER_3, player.invul_frames);
+    setup_foreground(foreground);
+    setup_layer(background_1, DITHER_1);
+    setup_layer(background_2, DITHER_3);
 
     reset_player(&player);
 

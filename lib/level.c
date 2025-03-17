@@ -1,13 +1,14 @@
 #include "level.h"
+#include "defines.h"
 #include "level_gen.h"
 #include "decorations.h"
 #include <stdbool.h>
 #include <math.h>
 #include <raylib.h>
 
-void setup_layer(char layer[GRID_X * 2][GRID_Y], char chr, int invul_frames) {
-    char** screen_1 = generate_blocks(0, chr, invul_frames);
-    char** screen_2 = generate_blocks(0, chr, invul_frames);
+void setup_layer(char layer[GRID_X * 2][GRID_Y], char chr) {
+    char** screen_1 = generate_blocks(0, chr, 0);
+    char** screen_2 = generate_blocks(0, chr, 0);
 
     for (int x = 0; x < GRID_X; x++) {
         for (int y = 0; y < GRID_Y; y++) {
@@ -24,6 +25,56 @@ void setup_layer(char layer[GRID_X * 2][GRID_Y], char chr, int invul_frames) {
     free(screen_2);
 
     add_rods(layer, chr);
+}
+
+void setup_foreground(char fg[GRID_X * 2][GRID_Y]) {
+    for (int x = 0; x < GRID_X; x++) {
+        for (int y = 0; y < GRID_Y; y++) {
+            fg[x][y] = ' ';
+       }
+    }
+
+    for (int x = 0; x < 76; x++) {
+        for (int y = 0; y < 12; y++) {
+            if ((x % 8) < 4) {
+                fg[x][y] = FULL_BLOCK;
+            }
+        }
+    }
+
+    for (int x = 0; x < 76; x++) {
+        for (int y = GRID_Y - 12; y < GRID_Y; y++) {
+            if ((x % 8) < 4) {
+                fg[x][y] = FULL_BLOCK;
+            }
+        }
+    }
+
+    for (int x = 0; x < 96; x++) {
+        for (int y = 12; y < 12 + 8; y++) {
+            fg[x][y] = FULL_BLOCK;
+        }
+    }
+
+    for (int x = 0; x < 96; x++) {
+        for (int y = GRID_Y - 12 - 8; y < GRID_Y - 12; y++) {
+            fg[x][y] = FULL_BLOCK;
+        }
+    }
+
+
+    char** next_screen = generate_blocks(0, FULL_BLOCK, 0);
+
+    for (int x = 0; x < GRID_X; x++) {
+        for (int y = 0; y < GRID_Y; y++) {
+            fg[GRID_X + x][y] = next_screen[x][y];
+        }
+    }
+
+    for (int x = 0; x < GRID_X; x++) {
+        free(next_screen[x]);
+    }
+    free(next_screen);
 }
 
 void extend_layer_if_needed(char layer[GRID_X * 2][GRID_Y], int stage, char chr, int invul_frames) {
