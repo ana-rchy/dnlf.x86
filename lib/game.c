@@ -37,24 +37,24 @@ void game_loop() {
     ClearBackground(bg_color);
         
     switch (game_state) {
-    case Menu:
-        break;
+        case Menu:
+            break;
 
-    case Ingame:
-        if (run_game_init) {
-            ingame_init();
-        }
+        case Ingame:
+            if (run_game_init) {
+                ingame_init();
+            }
 
-        ingame_loop();
-        break;
+            ingame_loop();
+            break;
 
-    case Dead:
-         if (run_death_init) {
-            death_init();
-        }
+        case Dead:
+             if (run_death_init) {
+                death_init();
+            }
 
-        death_loop();
-        break;
+            death_loop();
+            break;
     }
 
     output_screen(fg_color, bg_color);
@@ -93,7 +93,7 @@ void ingame_loop() {
     draw_player(&player);
     draw_invul_frames(player.invul_frames, player.invul_frames_max);
     if (player.score > 0) {
-        draw_ui_num(player.score, SCORE_X_POS, SCORE_Y_POS);
+        draw_small_font_num(player.score, SCORE_X_POS, SCORE_Y_POS);
     }
 
     level_loop();
@@ -143,10 +143,10 @@ void death_loop() {
     draw_particles(particles);
     draw_invul_frames(player.invul_frames, player.invul_frames_max);
     if (player.score > 0) {
-        draw_ui_num(player.score, SCORE_X_POS, SCORE_Y_POS);
+        draw_small_font_num(player.score, SCORE_X_POS, SCORE_Y_POS);
     }
 
-    draw_game_over_text();
+    draw_big_font("GAME OVER", GAME_OVER_X_POS, GAME_OVER_Y_POS, DITHER_2);
 
     update_particles(particles);
 

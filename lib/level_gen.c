@@ -135,23 +135,23 @@ char weird_texture_formula(int x, int y, int stage, int invul_frames) {
     }
 
     switch ((int) formula_result) {
-    case 220:
-        return FULL_BLOCK;
-    
-    case 221:
-        return DOWN_HALF;
+        case 220:
+            return FULL_BLOCK;
+        
+        case 221:
+            return DOWN_HALF;
 
-    case 222:
-        return LEFT_HALF;
+        case 222:
+            return LEFT_HALF;
 
-    case 223:
-        return RIGHT_HALF;
+        case 223:
+            return RIGHT_HALF;
 
-    case 224:
-        return UP_HALF;
+        case 224:
+            return UP_HALF;
 
-    default:
-        return FULL_BLOCK;
+        default:
+            return FULL_BLOCK;
     }
 }
 

@@ -1,9 +1,10 @@
 #include "renderer.h"
 #include "defines.h"
-#include "ui.h"
+#include "font.h"
 #include <raylib.h>
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 // we need this for Special Physics (see: update_player)
 char screen[GRID_X][GRID_Y];
@@ -84,7 +85,9 @@ void draw_player(Player* player) {
     }
 }
 
-void draw_ui_num(int num, int origin_x, int origin_y) {
+//////////////////////////////////////////////////////////////////
+
+void draw_small_font_num(int num, int origin_x, int origin_y) {
     int digits_count;
     if (num > 0) {
         digits_count = (int) log10(num) + 1;
@@ -92,24 +95,49 @@ void draw_ui_num(int num, int origin_x, int origin_y) {
         digits_count = 1;
     }
 
-    int start_x = origin_x + 6*(digits_count - 1);
+    int start_x = origin_x + (SMALL_FONT_X_SIZE + 1)*(digits_count - 1);
 
     for (int i = 1; i <= digits_count; i++) {
-        bool* font_char = int_to_num_font(num % 10);
+        bool* font_char = int_to_small_font(num % 10);
 
-        for (int y = 0; y < NUM_FONT_Y; y++) {
-            for (int x = 0; x < NUM_FONT_X; x++) {
+        for (int y = 0; y < SMALL_FONT_Y_SIZE; y++) {
+            for (int x = 0; x < SMALL_FONT_X_SIZE; x++) {
                 // equivalent to font_char[y][x]
-                if ( *(font_char + y*NUM_FONT_X + x) == true ) {
+                if ( *(font_char + y*SMALL_FONT_X_SIZE + x) == true ) {
                     draw_char(DITHER_2, start_x + x, origin_y + y);
                 }
             }
         }
 
-        start_x -= 6;
+        start_x -= SMALL_FONT_X_SIZE + 1;
         num /= 10;
     }
 }
+
+void draw_big_font(char* str, int origin_x, int origin_y, char texture_char) {
+    int str_len = strlen(str);
+
+    for (int i = 0; i < str_len; i++) {
+        if (str[i] == ' ') {
+            origin_x++;
+            continue;
+        }
+
+        bool* font_char = char_to_big_font(str[i]);
+        
+        for (int y = 0; y < BIG_FONT_Y_SIZE; y++) {
+            for (int x = 0; x < BIG_FONT_X_SIZE; x++) {
+                if ( *(font_char + y*BIG_FONT_X_SIZE + x) == true ) {
+                    draw_char(texture_char, origin_x + x, origin_y + y);
+                }
+            }
+        }
+
+        origin_x += BIG_FONT_X_SIZE + 1;
+    }
+}
+
+//////////////////////////////////////////////////////////////////
 
 void draw_invul_frames(int iframes, int iframes_max) {
     if (iframes < 0) {
@@ -118,50 +146,28 @@ void draw_invul_frames(int iframes, int iframes_max) {
     }
 
     if (iframes >= 10) {
-        draw_ui_num(iframes, INVUL_FRAMES_X_POS, INVUL_FRAMES_Y_POS);
+        draw_small_font_num(iframes, INVUL_FRAMES_X_POS, INVUL_FRAMES_Y_POS);
     } else {
-        draw_ui_num(0, INVUL_FRAMES_X_POS, INVUL_FRAMES_Y_POS);
-        draw_ui_num(iframes, INVUL_FRAMES_X_POS + 6, INVUL_FRAMES_Y_POS);
+        draw_small_font_num(0, INVUL_FRAMES_X_POS, INVUL_FRAMES_Y_POS);
+        draw_small_font_num(iframes, INVUL_FRAMES_X_POS + 6, INVUL_FRAMES_Y_POS);
     }
 
-    for (int y = 0; y < NUM_FONT_Y; y++) {
-        for (int x = 0; x < NUM_FONT_X; x++) {
-            if (NUM_FONT_SLASH[y][x] == true) {
+    // no dedicated draw function here cause the slash is the only non-num char in the small font
+    for (int y = 0; y < SMALL_FONT_Y_SIZE; y++) {
+        for (int x = 0; x < SMALL_FONT_X_SIZE; x++) {
+            if (SMALL_FONT_SLASH[y][x] == true) {
                 draw_char(DITHER_2, INVUL_FRAMES_X_POS + 6*2 + x, INVUL_FRAMES_Y_POS + y);
             }
         }
     }
 
-    draw_ui_num(iframes_max, INVUL_FRAMES_X_POS + 6*3, INVUL_FRAMES_Y_POS);
+    draw_small_font_num(iframes_max, INVUL_FRAMES_X_POS + 6*3, INVUL_FRAMES_Y_POS);
 }
 
 void draw_stage_text(int stage, char texture_char) {
-    bool* font_char = int_to_stage_font(stage);
+    char buffer[8];
 
-    for (int y = 0; y < STAGE_FONT_Y; y++) {
-        for (int x = 0; x < STAGE_FONT_X * 5 + 4; x++) {
-            if (STAGE_FONT_STAGE_TEXT[y][x] == true) {
-                draw_char(texture_char, STAGE_TEXT_X_POS + x, STAGE_TEXT_Y_POS + y);
-            }
-        }
-    }
+    snprintf(buffer, 8, "STAGE %c", stage_int_to_char(stage));
 
-    for (int y = 0; y < STAGE_FONT_Y; y++) {
-        for (int x = 0; x < STAGE_FONT_X; x++) {
-            // equivalent to font_char[y][x]
-            if ( *(font_char + y*STAGE_FONT_X + x) == true ) {
-                draw_char(texture_char, STAGE_CHAR_X_POS + x, STAGE_CHAR_Y_POS + y);
-            }
-        }
-    }
-}
-
-void draw_game_over_text() {
-    for (int y = 0; y < STAGE_FONT_Y; y++) {
-        for (int x = 0; x < STAGE_FONT_X * 8 + 8; x++) {
-            if (GAME_OVER_TEXT[y][x] == true) {
-                draw_char(GAME_OVER_TEXTURE_CHAR, GAME_OVER_X_POS + x, GAME_OVER_Y_POS + y);
-            }
-        }
-    }
+    draw_big_font(buffer, STAGE_TEXT_X_POS, STAGE_TEXT_Y_POS, texture_char);
 }
