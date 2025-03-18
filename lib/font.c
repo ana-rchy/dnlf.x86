@@ -1,4 +1,5 @@
 #include "font.h"
+#include "defines.h"
 #include <stdio.h>
 
 bool* int_to_small_font(int num) {
@@ -201,4 +202,19 @@ bool* char_to_big_font(char c) {
             printf("char_to_big_font: invalid char for big font, %c\n", c);
             return (bool*) BIG_FONT_A;
     }
+}
+
+//////////////////////////////////////////////////////////////////
+
+char texture_int_to_char(int num) {
+    if (num == 0) {
+        return ' ';
+    }
+
+    if (num < 1 || num > 5) {
+        printf("texture_int_to_char: invalid num, %d\n", num);
+        return ' ';
+    }
+
+    return FULL_BLOCK + (num - 1);
 }

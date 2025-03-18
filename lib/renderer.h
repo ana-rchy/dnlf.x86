@@ -16,6 +16,7 @@ void draw_player(Player* player);
 
 void draw_small_font_num(int score, int origin_x, int origin_y);
 void draw_big_font(char* str, int origin_x, int origin_y, char texture_char);
+void draw_icon(int* icon, int origin_x, int origin_y, int icon_size_x, int icon_size_y);
 
 void draw_invul_frames(int iframes, int iframes_max);
 void draw_stage_text(int stage, char texture_char);

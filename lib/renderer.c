@@ -137,6 +137,18 @@ void draw_big_font(char* str, int origin_x, int origin_y, char texture_char) {
     }
 }
 
+void draw_icon(int* icon, int origin_x, int origin_y, int icon_size_x, int icon_size_y) {
+    for (int y = 0; y < icon_size_y; y++) {
+        for (int x = 0; x < icon_size_x; x++) {
+            int texture_char = texture_int_to_char( *(icon + y*icon_size_x + x) );
+
+            if (texture_char != ' ') {
+                draw_char(texture_char, origin_x + x, origin_y + y);
+            }
+        }
+    }
+}
+
 //////////////////////////////////////////////////////////////////
 
 void draw_invul_frames(int iframes, int iframes_max) {

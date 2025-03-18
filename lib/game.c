@@ -1,5 +1,6 @@
 #include "game.h"
 #include "defines.h"
+#include "font.h"
 #include "renderer.h"
 #include "level.h"
 #include "decorations.h"
@@ -9,7 +10,8 @@
 #include <raylib.h>
 
 
-GameState game_state = Ingame;
+GameState game_state = Menu;
+bool run_menu_init = true;
 bool run_game_init = true;
 bool run_death_init = true;
 
@@ -38,6 +40,11 @@ void game_loop() {
         
     switch (game_state) {
         case Menu:
+            if (run_menu_init) {
+                menu_init();
+            }
+
+            menu_loop();
             break;
 
         case Ingame:
@@ -49,7 +56,7 @@ void game_loop() {
             break;
 
         case Dead:
-             if (run_death_init) {
+            if (run_death_init) {
                 death_init();
             }
 
@@ -62,7 +69,41 @@ void game_loop() {
 
 //////////////////////////////////////////////////////////////////
 
+void menu_init() {
+    run_menu_init = false;
+
+    clear_particles(particles);
+}
+
+void menu_loop() {
+    draw_particles(particles);
+
+    draw_big_font("DO          NOT", MENU_DO_NOT_X_POS, MENU_DO_NOT_Y_POS, FULL_BLOCK);
+    draw_big_font("LOSE          FOCUS", MENU_LOSE_FOCUS_X_POS, MENU_LOSE_FOCUS_Y_POS, FULL_BLOCK);
+
+    draw_icon((int*) ICON_PLAY_ARROW, MENU_PLAY_ARROW_X_POS, MENU_PLAY_ARROW_Y_POS, BIG_FONT_X_SIZE, BIG_FONT_Y_SIZE);
+    draw_icon((int*) ICON_EXIT_DOOR, MENU_EXIT_DOOR_X_POS, MENU_EXIT_DOOR_Y_POS, BIG_FONT_X_SIZE, BIG_FONT_Y_SIZE);
+
+    if (rand_range(0, 1) == 1) {
+        insert_new_particle(
+            (Vector2) { (float) GRID_X - 1, rand_range(0, GRID_Y - 1) },
+            (Vector2) { ((float) rand_range(-29, 0) / 10) - 1, 0 },
+            (Vector2) { 0, 0 },
+            (char[PARTICLE_STATES]) { '*', '*' },
+            0,
+            -1,
+            "fly-by",
+            particles
+        );
+    }
+
+    update_particles(particles);
+}
+
+//////////////////////////////////////////////////////////////////
+
 void ingame_init() {
+    run_game_init = false;
     run_death_init = true;
 
     fg_scroll_overflow = bg_1_scroll_overflow = bg_2_scroll_overflow = 0;
@@ -86,8 +127,6 @@ void ingame_init() {
 }
 
 void ingame_loop() {
-    run_game_init = false;
-
     draw_level(foreground, background_1, background_2);
     draw_particles(particles);
     draw_player(&player);
@@ -96,18 +135,81 @@ void ingame_loop() {
         draw_small_font_num(player.score, SCORE_X_POS, SCORE_Y_POS);
     }
 
-    level_loop();
-    stage_loop();
+    ingame_level_loop();
+    ingame_stage_loop();
 
     // yes this order is VERY intentional
     // see: update_player comments and OG code ('game_loop()')
-    particles_loop();
+    ingame_particles_loop();
     update_player(&player, particles, total_distance, &game_state);
 }
 
 //////////////////////////////////////////////////////////////////
 
+void ingame_level_loop() {
+    total_distance += scroll_speed;
+    scroll_speed += SCROLL_SPEED_ACCELERATION;
+
+    scroll_and_extend_layer(foreground, stage, FULL_BLOCK, scroll_speed, &fg_scroll_overflow, player.invul_frames);
+    scroll_and_extend_layer(background_1, stage, DITHER_1, scroll_speed / BG_1_PARALLAX_DIVIDER, &bg_1_scroll_overflow, player.invul_frames);
+    scroll_and_extend_layer(background_2, stage, DITHER_3, scroll_speed / BG_2_PARALLAX_DIVIDER, &bg_2_scroll_overflow, player.invul_frames);
+}
+
+void ingame_particles_loop() {
+    update_particles(particles);
+
+    insert_new_particle(
+        (Vector2) { PLAYER_X, player.y },
+        (Vector2) { -scroll_speed, 0 },
+        (Vector2) { 0, 0 },
+        (char[PARTICLE_STATES]) { '+', '-' },
+        0,
+        10.0 / 60.0,
+        "player trail",
+        particles
+    );
+
+    if (rand_range(1, 10) == 1) {
+        insert_new_particle(
+            (Vector2) { (float) GRID_X - 1, rand_range(0, GRID_Y - 1) },
+            (Vector2) { -scroll_speed * rand_range(2, 4), 0 },
+            (Vector2) { 0, 0 },
+            (char[PARTICLE_STATES]) { '-', '*' },
+            0,
+            rand_range(1, 10) / 60.0,
+            "fly-by",
+            particles
+        );
+    }
+}
+
+void ingame_stage_loop() {
+    time_since_game_start += GetFrameTime();
+    stage = min(time_since_game_start / STAGE_TIME, MAX_STAGE);
+
+    set_stage_colors(stage, &fg_color, &bg_color);
+    set_invul_frames_max(stage, &player.invul_frames_max);
+    
+    float time_since_current_stage = time_since_game_start - stage*STAGE_TIME;
+
+    if (time_since_current_stage <= STAGE_TEXT_VISIBLE_TIME && stage > 0) {
+        if (fmod(time_since_current_stage, STAGE_TEXT_CHAR_PERIOD) < STAGE_TEXT_CHAR_PERIOD / 2) {
+            draw_stage_text(stage, FULL_BLOCK);
+        } else {
+            draw_stage_text(stage, DITHER_2);
+        }
+    }
+
+    if (time_since_current_stage < 1.0 / 60.0 && stage > 0) {
+        player.score += 2500;
+        player.invul_frames = min(player.invul_frames + 10, player.invul_frames_max);
+    }
+}
+
+//////////////////////////////////////////////////////////////////
+
 void death_init() {
+    run_death_init = false;
     run_game_init = true;
 
     for (int i = 0; i < 20; i++) {
@@ -137,8 +239,6 @@ void death_init() {
 }
 
 void death_loop() {
-    run_death_init = false;
-
     draw_level(foreground, background_1, background_2);
     draw_particles(particles);
     draw_invul_frames(player.invul_frames, player.invul_frames_max);
@@ -152,67 +252,5 @@ void death_loop() {
 
     if (IsKeyPressed(KEY_SPACE)) {
         game_state = Ingame;
-    }
-}
-
-//////////////////////////////////////////////////////////////////
-
-void level_loop() {
-    total_distance += scroll_speed;
-    scroll_speed += SCROLL_SPEED_ACCELERATION;
-
-    scroll_and_extend_layer(foreground, stage, FULL_BLOCK, scroll_speed, &fg_scroll_overflow, player.invul_frames);
-    scroll_and_extend_layer(background_1, stage, DITHER_1, scroll_speed / BG_1_PARALLAX_DIVIDER, &bg_1_scroll_overflow, player.invul_frames);
-    scroll_and_extend_layer(background_2, stage, DITHER_3, scroll_speed / BG_2_PARALLAX_DIVIDER, &bg_2_scroll_overflow, player.invul_frames);
-}
-
-void particles_loop() {
-    update_particles(particles);
-
-    insert_new_particle(
-        (Vector2) { PLAYER_X, player.y },
-        (Vector2) { -scroll_speed, 0 },
-        (Vector2) { 0, 0 },
-        (char[PARTICLE_STATES]) { '+', '-' },
-        0,
-        10.0 / 60.0,
-        "player trail",
-        particles
-    );
-
-    if (rand_range(1, 10) == 1) {
-        insert_new_particle(
-            (Vector2) { (float) GRID_X - 1, rand_range(0, GRID_Y - 1) },
-            (Vector2) { -scroll_speed * rand_range(2, 4), 0 },
-            (Vector2) { 0, 0 },
-            (char[PARTICLE_STATES]) { '-', '*' },
-            0,
-            rand_range(1, 10) / 60.0,
-            "fly-by",
-            particles
-        );
-    }
-}
-
-void stage_loop() {
-    time_since_game_start += GetFrameTime();
-    stage = min(time_since_game_start / STAGE_TIME, MAX_STAGE);
-
-    set_stage_colors(stage, &fg_color, &bg_color);
-    set_invul_frames_max(stage, &player.invul_frames_max);
-    
-    float time_since_current_stage = time_since_game_start - stage*STAGE_TIME;
-
-    if (time_since_current_stage <= STAGE_TEXT_VISIBLE_TIME && stage > 0) {
-        if (fmod(time_since_current_stage, STAGE_TEXT_CHAR_PERIOD) < STAGE_TEXT_CHAR_PERIOD / 2) {
-            draw_stage_text(stage, FULL_BLOCK);
-        } else {
-            draw_stage_text(stage, DITHER_2);
-        }
-    }
-
-    if (time_since_current_stage < 1.0 / 60.0 && stage > 0) {
-        player.score += 2500;
-        player.invul_frames = min(player.invul_frames + 10, player.invul_frames_max);
     }
 }
