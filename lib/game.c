@@ -146,6 +146,8 @@ void death_loop() {
         draw_ui_num(player.score, SCORE_X_POS, SCORE_Y_POS);
     }
 
+    draw_game_over_text();
+
     update_particles(particles);
 
     if (IsKeyPressed(KEY_SPACE)) {

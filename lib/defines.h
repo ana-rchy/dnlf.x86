@@ -82,6 +82,10 @@
 #define STAGE_TEXT_VISIBLE_TIME 30.0 / 60.0
 #define STAGE_TEXT_CHAR_PERIOD 2.0 / 30.0
 
+#define GAME_OVER_X_POS 24
+#define GAME_OVER_Y_POS 20
+#define GAME_OVER_TEXTURE_CHAR DITHER_2
+
 
 #define min(a, b) ( (a < b) ? a : b )
 #define max(a, b) ( (a > b) ? a : b )

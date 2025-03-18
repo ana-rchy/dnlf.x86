@@ -16,3 +16,4 @@ void draw_player(Player* player);
 void draw_ui_num(int score, int origin_x, int origin_y);
 void draw_invul_frames(int iframes, int iframes_max);
 void draw_stage_text(int stage, char texture_char);
+void draw_game_over_text();

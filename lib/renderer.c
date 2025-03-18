@@ -99,6 +99,7 @@ void draw_ui_num(int num, int origin_x, int origin_y) {
 
         for (int y = 0; y < NUM_FONT_Y; y++) {
             for (int x = 0; x < NUM_FONT_X; x++) {
+                // equivalent to font_char[y][x]
                 if ( *(font_char + y*NUM_FONT_X + x) == true ) {
                     draw_char(DITHER_2, start_x + x, origin_y + y);
                 }
@@ -147,8 +148,19 @@ void draw_stage_text(int stage, char texture_char) {
 
     for (int y = 0; y < STAGE_FONT_Y; y++) {
         for (int x = 0; x < STAGE_FONT_X; x++) {
+            // equivalent to font_char[y][x]
             if ( *(font_char + y*STAGE_FONT_X + x) == true ) {
                 draw_char(texture_char, STAGE_CHAR_X_POS + x, STAGE_CHAR_Y_POS + y);
+            }
+        }
+    }
+}
+
+void draw_game_over_text() {
+    for (int y = 0; y < STAGE_FONT_Y; y++) {
+        for (int x = 0; x < STAGE_FONT_X * 8 + 8; x++) {
+            if (GAME_OVER_TEXT[y][x] == true) {
+                draw_char(GAME_OVER_TEXTURE_CHAR, GAME_OVER_X_POS + x, GAME_OVER_Y_POS + y);
             }
         }
     }
