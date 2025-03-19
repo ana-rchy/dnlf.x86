@@ -2,7 +2,7 @@
 #include "defines.h"
 #include <stdbool.h>
 
-bool* int_to_small_font(int num);
+bool* char_to_small_font(char c);
 
 char stage_int_to_char(int num);
 bool* char_to_big_font(char c);

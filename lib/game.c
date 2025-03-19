@@ -10,7 +10,7 @@
 #include <raylib.h>
 
 
-GameState game_state = Menu;
+GameState game_state = Ingame;
 bool run_menu_init = true;
 bool run_game_init = true;
 bool run_death_init = true;
@@ -130,10 +130,9 @@ void ingame_loop() {
     draw_level(foreground, background_1, background_2);
     draw_particles(particles);
     draw_player(&player);
+
     draw_invul_frames(player.invul_frames, player.invul_frames_max);
-    if (player.score > 0) {
-        draw_small_font_num(player.score, SCORE_X_POS, SCORE_Y_POS);
-    }
+    draw_score(player.score);
 
     ingame_level_loop();
     ingame_stage_loop();
@@ -241,10 +240,9 @@ void death_init() {
 void death_loop() {
     draw_level(foreground, background_1, background_2);
     draw_particles(particles);
+
     draw_invul_frames(player.invul_frames, player.invul_frames_max);
-    if (player.score > 0) {
-        draw_small_font_num(player.score, SCORE_X_POS, SCORE_Y_POS);
-    }
+    draw_score(player.score);
 
     draw_big_font("GAME OVER", GAME_OVER_X_POS, GAME_OVER_Y_POS, DITHER_2);
 

@@ -2,99 +2,59 @@
 #include "defines.h"
 #include <stdio.h>
 
-bool* int_to_small_font(int num) {
-    switch (num) {
-        case 0:
+bool* char_to_small_font(char c) {
+    switch (c) {
+        case '0':
             return (bool*) SMALL_FONT_0;
 
-        case 1:
+        case '1':
             return (bool*) SMALL_FONT_1;
 
-        case 2:
+        case '2':
             return (bool*) SMALL_FONT_2;
 
-        case 3:
+        case '3':
             return (bool*) SMALL_FONT_3;
 
-        case 4:
+        case '4':
             return (bool*) SMALL_FONT_4;
 
-        case 5:
+        case '5':
             return (bool*) SMALL_FONT_5;
 
-        case 6:
+        case '6':
             return (bool*) SMALL_FONT_6;
 
-        case 7:
+        case '7':
             return (bool*) SMALL_FONT_7;
 
-        case 8:
+        case '8':
             return (bool*) SMALL_FONT_8;
 
-        case 9:
+        case '9':
             return (bool*) SMALL_FONT_9;
 
-        default:
-            printf("int_to_small_font: invalid int for small font, %d\n", num);
-            return (bool*) SMALL_FONT_0;
+        case '/':
+            return (bool*) SMALL_FONT_SLASH;
 
+        default:
+            printf("char_to_small_font: invalid char for small font, %c\n", c);
+            return (bool*) SMALL_FONT_0;
     }
 }
 
 //////////////////////////////////////////////////////////////////
 
 char stage_int_to_char(int num) {
-    switch (num) {
-        case 1:
-            return '1';
-
-        case 2:
-            return '2';
-
-        case 3:
-            return '3';
-
-        case 4:
-            return '4';
-
-        case 5:
-            return '5';
-
-        case 6:
-            return '6';
-
-        case 7:
-            return '7';
-
-        case 8:
-            return '8';
-
-        case 9:
-            return '9';
-
-        case 10:
-            return 'A';
-
-        case 11:
-            return 'B';
-
-        case 12:
-            return 'C';
-
-        case 13:
-            return 'D';
-
-        case 14:
-            return 'E';
-
-        case 15:
-            return 'F';
-
-        default:
-            printf("int_to_big_font: invalid int for big font, %d\n", num);
-            return '1';
-
+    if (num < 1 || num > 15) {
+        printf("int_to_big_font: invalid int for big font, %d\n", num);
+        return '0';
     }
+
+    char buffer[2];
+    snprintf(buffer, 2, "%X", num);
+
+    return buffer[0];
 }
 
 

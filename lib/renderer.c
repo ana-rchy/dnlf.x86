@@ -1,9 +1,7 @@
 #include "renderer.h"
 #include "defines.h"
 #include "font.h"
-#include <raylib.h>
 #include <stdio.h>
-#include <math.h>
 #include <string.h>
 
 // we need this for Special Physics (see: update_player)
@@ -87,30 +85,26 @@ void draw_player(Player* player) {
 
 //////////////////////////////////////////////////////////////////
 
-void draw_small_font_num(int num, int origin_x, int origin_y) {
-    int digits_count;
-    if (num > 0) {
-        digits_count = (int) log10(num) + 1;
-    } else {
-        digits_count = 1;
-    }
+void draw_small_font(char* str, int origin_x, int origin_y, char texture_char) {
+    int str_len = strlen(str);
 
-    int start_x = origin_x + (SMALL_FONT_X_SIZE + 1)*(digits_count - 1);
+    for (int i = 0; i < str_len; i++) {
+        if (str[i] == ' ') {
+            origin_x++;
+            continue;
+        }
 
-    for (int i = 1; i <= digits_count; i++) {
-        bool* font_char = int_to_small_font(num % 10);
-
+        bool* font_char = char_to_small_font(str[i]);
+        
         for (int y = 0; y < SMALL_FONT_Y_SIZE; y++) {
             for (int x = 0; x < SMALL_FONT_X_SIZE; x++) {
-                // equivalent to font_char[y][x]
                 if ( *(font_char + y*SMALL_FONT_X_SIZE + x) == true ) {
-                    draw_char(DITHER_2, start_x + x, origin_y + y);
+                    draw_char(texture_char, origin_x + x, origin_y + y);
                 }
             }
         }
 
-        start_x -= SMALL_FONT_X_SIZE + 1;
-        num /= 10;
+        origin_x += SMALL_FONT_X_SIZE + 1;
     }
 }
 
@@ -151,29 +145,26 @@ void draw_icon(int* icon, int origin_x, int origin_y, int icon_size_x, int icon_
 
 //////////////////////////////////////////////////////////////////
 
+void draw_score(int score) {
+    if (score > 0) {
+        char buffer[50];
+        snprintf(buffer, 50, "%d", score);
+
+        draw_small_font(buffer, SCORE_X_POS, SCORE_Y_POS, DITHER_2);
+    }
+}
+
 void draw_invul_frames(int iframes, int iframes_max) {
     if (iframes < 0) {
         printf("draw_invul_frames: iframes less than 0");
         return;
     }
+   
+    // compiler complains if this is only 6 bytes, so its 24 bytes
+    char buffer[24];
+    snprintf(buffer, 24, "%02d/%02d", iframes, iframes_max);
 
-    if (iframes >= 10) {
-        draw_small_font_num(iframes, INVUL_FRAMES_X_POS, INVUL_FRAMES_Y_POS);
-    } else {
-        draw_small_font_num(0, INVUL_FRAMES_X_POS, INVUL_FRAMES_Y_POS);
-        draw_small_font_num(iframes, INVUL_FRAMES_X_POS + 6, INVUL_FRAMES_Y_POS);
-    }
-
-    // no dedicated draw function here cause the slash is the only non-num char in the small font
-    for (int y = 0; y < SMALL_FONT_Y_SIZE; y++) {
-        for (int x = 0; x < SMALL_FONT_X_SIZE; x++) {
-            if (SMALL_FONT_SLASH[y][x] == true) {
-                draw_char(DITHER_2, INVUL_FRAMES_X_POS + 6*2 + x, INVUL_FRAMES_Y_POS + y);
-            }
-        }
-    }
-
-    draw_small_font_num(iframes_max, INVUL_FRAMES_X_POS + 6*3, INVUL_FRAMES_Y_POS);
+    draw_small_font(buffer, INVUL_FRAMES_X_POS, INVUL_FRAMES_Y_POS, DITHER_2);
 }
 
 void draw_stage_text(int stage, char texture_char) {

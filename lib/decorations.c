@@ -1,6 +1,5 @@
 #include "decorations.h"
 #include "defines.h"
-#include <raylib.h>
 #include <stdbool.h>
 
 // TODO: make this function more readable jfc
@@ -129,8 +128,6 @@ void insert_new_particle(Vector2 pos,
 }
 
 //////////////////////////////////////////////////////////////////
-
-#include <stdio.h>
 
 void update_particles(Particle particles[MAX_PARTICLES]) {
     for (int i = 0; i < MAX_PARTICLES; i++) {
