@@ -7,7 +7,7 @@
 #include <string.h>
 
 // we need this for Special Physics (see: update_player)
-char screen[GRID_X][GRID_Y];
+char screen[GRID_X_SIZE][GRID_Y_SIZE];
 Font font;
 
 void setup_renderer() {
@@ -15,7 +15,7 @@ void setup_renderer() {
 }
 
 void draw_char(char c, int x, int y) {
-    if (x < 0 || x >= GRID_X || y < 0 || y >= GRID_Y) {
+    if (x < 0 || x >= GRID_X_SIZE || y < 0 || y >= GRID_Y_SIZE) {
         printf("char %c out of bounds @ (%d, %d)\n", c, x, y);
         return;
     }
@@ -24,16 +24,16 @@ void draw_char(char c, int x, int y) {
 }
 
 void output_screen(Color fg_color, Color bg_color) {
-    for (int x = 0; x < GRID_X; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
-            Vector2 pos = { x * UNIT_X, y * UNIT_Y };
+    for (int x = 0; x < GRID_X_SIZE; x++) {
+        for (int y = 0; y < GRID_Y_SIZE; y++) {
+            Vector2 pos = { x * UNIT_X_SIZE, y * UNIT_Y_SIZE };
 
             // guarantee a string with a single char in it,
             // in an array it might be interpreted differently
             char chr[2];
             sprintf(chr, "%c", screen[x][y]);
             
-            DrawRectangle(pos.x, pos.y, UNIT_X, UNIT_Y, bg_color);
+            DrawRectangle(pos.x, pos.y, UNIT_X_SIZE, UNIT_Y_SIZE, bg_color);
             DrawTextEx(font, chr, pos, 12, 0, fg_color);
 
             screen[x][y] = ' ';
@@ -43,9 +43,9 @@ void output_screen(Color fg_color, Color bg_color) {
 
 //////////////////////////////////////////////////////////////////
 
-void draw_level(char foreground[GRID_X * 2][GRID_Y], char background_1[GRID_X * 2][GRID_Y], char background_2[GRID_X * 2][GRID_Y]) {
-    for (int x = 0; x < GRID_X; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
+void draw_level(char foreground[GRID_X_SIZE * 2][GRID_Y_SIZE], char background_1[GRID_X_SIZE * 2][GRID_Y_SIZE], char background_2[GRID_X_SIZE * 2][GRID_Y_SIZE]) {
+    for (int x = 0; x < GRID_X_SIZE; x++) {
+        for (int y = 0; y < GRID_Y_SIZE; y++) {
             draw_char(background_2[x][y], x, y);
 
             if (background_1[x][y] != ' ') {
@@ -73,15 +73,15 @@ void draw_particles(Particle particles[MAX_PARTICLES]) {
 
 void draw_player(Player* player) {
     if (player->y_accel < 0) {
-        draw_char('^', PLAYER_X - 1, player->y);
+        draw_char('^', PLAYER_X_POS - 1, player->y);
     } else {
-        draw_char('v', PLAYER_X - 1, player->y);
+        draw_char('v', PLAYER_X_POS - 1, player->y);
     }
 
     if (player->invul_frames > 0) {
-        draw_char('@', PLAYER_X, player->y);
+        draw_char('@', PLAYER_X_POS, player->y);
     } else {
-        draw_char('#', PLAYER_X, player->y);
+        draw_char('#', PLAYER_X_POS, player->y);
     }
 }
 

@@ -13,7 +13,7 @@ typedef struct particle {
     char* group;
 } Particle;
 
-void add_rods(char layer[GRID_X * 2][GRID_Y], char chr);
+void add_rods(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], char chr);
 
 void clear_particles(Particle particles[MAX_PARTICLES]);
 void insert_new_particle(Vector2 pos,

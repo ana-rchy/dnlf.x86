@@ -445,7 +445,7 @@ static const bool BIG_FONT_Y[BIG_FONT_Y_SIZE][BIG_FONT_X_SIZE] = {
 // 4 = left half
 // 5 = right half
 
-static const int ICON_PLAY_ARROW[BIG_FONT_Y_SIZE][BIG_FONT_X_SIZE] = {
+static const int ICON_PLAY_ARROW[ICON_PLAY_ARROW_Y_SIZE][ICON_PLAY_ARROW_X_SIZE] = {
     {1,1,1,1,1,1,1,1,1},
     {1,0,3,0,0,0,0,0,1},
     {1,0,1,1,3,0,0,0,1},
@@ -456,7 +456,7 @@ static const int ICON_PLAY_ARROW[BIG_FONT_Y_SIZE][BIG_FONT_X_SIZE] = {
     {1,1,1,1,1,1,1,1,1},
 };
 
-static const int ICON_EXIT_DOOR[BIG_FONT_Y_SIZE][BIG_FONT_X_SIZE] = {
+static const int ICON_EXIT_DOOR[ICON_EXIT_DOOR_Y_SIZE][ICON_EXIT_DOOR_X_SIZE] = {
     {1,1,1,1,1,1,1,1,1},
     {1,0,0,0,0,0,0,0,1},
     {1,0,5,2,1,1,4,0,1},
@@ -467,7 +467,7 @@ static const int ICON_EXIT_DOOR[BIG_FONT_Y_SIZE][BIG_FONT_X_SIZE] = {
     {1,1,1,1,1,1,1,1,1},
 };
 
-static const int ICON_HOURGLASS[BIG_FONT_Y_SIZE][BIG_FONT_X_SIZE] = {
+static const int ICON_HOURGLASS[ICON_HOURGLASS_Y_SIZE][ICON_HOURGLASS_X_SIZE] = {
     {1,1,1,1,1,1,1,1,1},
     {0,1,4,0,0,0,5,1,0},
     {0,0,1,4,0,5,1,0,0},
@@ -478,7 +478,7 @@ static const int ICON_HOURGLASS[BIG_FONT_Y_SIZE][BIG_FONT_X_SIZE] = {
     {1,1,1,1,1,1,1,1,1},
 };
 
-static const int ICON_EXCLAMATION[BIG_FONT_Y_SIZE][ICON_EXCLAMATION_X_SIZE] = {
+static const int ICON_EXCLAMATION[ICON_EXCLAMATION_Y_SIZE][ICON_EXCLAMATION_X_SIZE] = {
     {1,1,1},
     {1,1,1},
     {5,1,4},
@@ -489,7 +489,7 @@ static const int ICON_EXCLAMATION[BIG_FONT_Y_SIZE][ICON_EXCLAMATION_X_SIZE] = {
     {5,1,4},
 };
 
-static const int ICON_HEART[BIG_FONT_Y_SIZE][ICON_HEART_X_SIZE] = {
+static const int ICON_HEART[ICON_HEART_Y_SIZE][ICON_HEART_X_SIZE] = {
     {0,1,1,1,0,0,1,1,1,0},
     {1,1,1,1,1,1,1,1,1,1},
     {1,1,1,1,1,1,1,1,1,1},

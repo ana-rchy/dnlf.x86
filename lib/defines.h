@@ -1,14 +1,16 @@
 #pragma once
 #include <stdlib.h>
 
+//// window ////
 #define FRAME_RATE 60
-#define SCREEN_X 1024
-#define SCREEN_Y 576
-#define UNIT_X 8
-#define UNIT_Y 12
-#define GRID_X SCREEN_X / UNIT_X
-#define GRID_Y SCREEN_Y / UNIT_Y
+#define SCREEN_X_SIZE 1024
+#define SCREEN_Y_SIZE 576
+#define UNIT_X_SIZE 8
+#define UNIT_Y_SIZE 12
+#define GRID_X_SIZE SCREEN_X_SIZE / UNIT_X_SIZE
+#define GRID_Y_SIZE SCREEN_Y_SIZE / UNIT_Y_SIZE
 
+//// font chars ////
 #define FULL_BLOCK '`'
 #define UP_HALF 'a'
 #define DOWN_HALF 'b'
@@ -25,9 +27,50 @@
 #define DITHER_2 'm'
 #define DITHER_3 'n'
 
-#define BG_1_PARALLAX_DIVIDER 2.0
-#define BG_2_PARALLAX_DIVIDER 3.0
+//// font sizes ////
+#define SMALL_FONT_X_SIZE 5
+#define SMALL_FONT_Y_SIZE 5
+#define BIG_FONT_X_SIZE 9
+#define BIG_FONT_Y_SIZE 8
 
+#define ICON_PLAY_ARROW_X_SIZE BIG_FONT_X_SIZE
+#define ICON_PLAY_ARROW_Y_SIZE BIG_FONT_Y_SIZE
+#define ICON_EXIT_DOOR_X_SIZE BIG_FONT_X_SIZE
+#define ICON_EXIT_DOOR_Y_SIZE BIG_FONT_Y_SIZE
+#define ICON_HOURGLASS_X_SIZE BIG_FONT_X_SIZE
+#define ICON_HOURGLASS_Y_SIZE BIG_FONT_Y_SIZE
+#define ICON_EXCLAMATION_X_SIZE 3
+#define ICON_EXCLAMATION_Y_SIZE BIG_FONT_Y_SIZE
+#define ICON_HEART_X_SIZE 10
+#define ICON_HEART_Y_SIZE BIG_FONT_Y_SIZE
+
+//// font etc ////
+// menu
+#define MENU_DO_NOT_X_POS 16
+#define MENU_DO_NOT_Y_POS 11
+#define MENU_LOSE_FOCUS_X_POS MENU_DO_NOT_X_POS
+#define MENU_LOSE_FOCUS_Y_POS 29
+#define MENU_PLAY_ARROW_X_POS MENU_DO_NOT_X_POS
+#define MENU_PLAY_ARROW_Y_POS 20
+#define MENU_EXIT_DOOR_X_POS 66
+#define MENU_EXIT_DOOR_Y_POS MENU_PLAY_ARROW_Y_POS
+
+// ingame
+#define SCORE_X_POS 1
+#define SCORE_Y_POS 1
+#define INVUL_FRAMES_X_POS 1
+#define INVUL_FRAMES_Y_POS GRID_Y_SIZE - 1 - SMALL_FONT_Y_SIZE
+#define STAGE_CHAR_X_POS GRID_X_SIZE - 1 - BIG_FONT_X_SIZE
+#define STAGE_CHAR_Y_POS GRID_Y_SIZE - 1 - BIG_FONT_Y_SIZE
+#define STAGE_TEXT_X_POS STAGE_CHAR_X_POS - BIG_FONT_X_SIZE*5 - 4 - 2
+#define STAGE_TEXT_Y_POS STAGE_CHAR_Y_POS
+
+// game over
+#define GAME_OVER_X_POS 24
+#define GAME_OVER_Y_POS 20
+#define GAME_OVER_TEXTURE_CHAR DITHER_2
+
+//// colors ////
 // these are actually the default windows terminal colors but yeag
 #define DNLF_WHITE (Color) { 242, 242, 242, 255 }
 #define DNLF_BLACK (Color) { 12, 12, 12, 255 }
@@ -46,58 +89,41 @@
 #define DNLF_BRIGHT_PURPLE (Color) { 180, 0, 158, 255 }
 #define DNLF_BRIGHT_YELLOW (Color) { 249, 241, 165, 255 }
 
+//// background ////
+#define BG_1_PARALLAX_DIVIDER 2.0
+#define BG_2_PARALLAX_DIVIDER 3.0
+
+//// level gen ////
 #define MAX_AIR_BLOCKS 6
+#define MAX_EDGE_BLOCKS 16
+
 #define MIN_AIR_BLOCK_SIZE 2
 #define MAX_AIR_BLOCK_SIZE 8
 
-#define MAX_EDGE_BLOCKS 16
 #define MAX_TALL_EDGE_BLOCKS 4
 #define MIN_SHORT_TALL_BLOCK_DIFFERENCE 15
 
+//// stage ////
 #define MAX_STAGE 15
 #define STAGE_TIME 20
-#define SCROLL_SPEED_ACCELERATION 0.0001
-
-#define MAX_PARTICLES 1024
-#define PARTICLE_STATES 2
-
-#define PLAYER_X 30
-#define PLAYER_START_Y (float) GRID_Y / 2
-#define PLAYER_Y_ACCEL 0.04
-
-#define SMALL_FONT_X_SIZE 5
-#define SMALL_FONT_Y_SIZE 5
-#define BIG_FONT_X_SIZE 9
-#define BIG_FONT_Y_SIZE 8
-#define ICON_EXCLAMATION_X_SIZE 3
-#define ICON_HEART_X_SIZE 10
-
-#define MENU_DO_NOT_X_POS 16
-#define MENU_DO_NOT_Y_POS 11
-#define MENU_LOSE_FOCUS_X_POS MENU_DO_NOT_X_POS
-#define MENU_LOSE_FOCUS_Y_POS 29
-#define MENU_PLAY_ARROW_X_POS MENU_DO_NOT_X_POS
-#define MENU_PLAY_ARROW_Y_POS 20
-#define MENU_EXIT_DOOR_X_POS 66
-#define MENU_EXIT_DOOR_Y_POS MENU_PLAY_ARROW_Y_POS
-
-#define SCORE_X_POS 1
-#define SCORE_Y_POS 1
-#define INVUL_FRAMES_X_POS 1
-#define INVUL_FRAMES_Y_POS GRID_Y - 1 - SMALL_FONT_Y_SIZE
-#define STAGE_CHAR_X_POS GRID_X - 1 - BIG_FONT_X_SIZE
-#define STAGE_CHAR_Y_POS GRID_Y - 1 - BIG_FONT_Y_SIZE
-#define STAGE_TEXT_X_POS STAGE_CHAR_X_POS - BIG_FONT_X_SIZE*5 - 4 - 2
-#define STAGE_TEXT_Y_POS STAGE_CHAR_Y_POS
 
 #define STAGE_TEXT_VISIBLE_TIME 30.0 / 60.0
 #define STAGE_TEXT_CHAR_PERIOD 2.0 / 30.0
 
-#define GAME_OVER_X_POS 24
-#define GAME_OVER_Y_POS 20
-#define GAME_OVER_TEXTURE_CHAR DITHER_2
+//// particles ////
+#define MAX_PARTICLES 1024
+#define PARTICLE_STATES 2
+
+//// player ////
+#define PLAYER_X_POS 30
+#define PLAYER_START_Y_POS (float) GRID_Y_SIZE / 2
+#define PLAYER_Y_ACCEL 0.04
+
+#define SCROLL_SPEED_ACCELERATION 0.0001
 
 
+
+//// macros ////
 #define min(a, b) ( (a < b) ? a : b )
 #define max(a, b) ( (a > b) ? a : b )
 #define clamp(val, min_val, max_val) ( max(min(val, max_val), min_val) )

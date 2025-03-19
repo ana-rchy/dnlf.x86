@@ -5,13 +5,13 @@
 // reimplementation of the 'geometry' function
 char** generate_blocks(int stage, char chr, int invul_frames) {
     // idk why this syntax works but sure
-    char** new_screen = malloc(GRID_X * sizeof(char*));
-    for (int x = 0; x < GRID_X; x++) {
-        new_screen[x] = malloc(GRID_Y * sizeof(char));
+    char** new_screen = malloc(GRID_X_SIZE * sizeof(char*));
+    for (int x = 0; x < GRID_X_SIZE; x++) {
+        new_screen[x] = malloc(GRID_Y_SIZE * sizeof(char));
     }
 
-    for (int x = 0; x < GRID_X; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
+    for (int x = 0; x < GRID_X_SIZE; x++) {
+        for (int y = 0; y < GRID_Y_SIZE; y++) {
             new_screen[x][y] = ' ';
        }
     }
@@ -26,8 +26,8 @@ char** generate_blocks(int stage, char chr, int invul_frames) {
         int rect_height = rand_range(MIN_AIR_BLOCK_SIZE, MAX_AIR_BLOCK_SIZE);
         
         // rectangle absolute x/y pos
-        int rect_abs_x_pos = rand_range(0, GRID_X - rect_width);
-        int rect_abs_y_pos = rand_range(0, GRID_Y - rect_height);
+        int rect_abs_x_pos = rand_range(0, GRID_X_SIZE - rect_width);
+        int rect_abs_y_pos = rand_range(0, GRID_Y_SIZE - rect_height);
         
         // assumes a block starting from 0, 0
         // before actually putting it in the correct position in the new screen
@@ -58,9 +58,9 @@ char** generate_blocks(int stage, char chr, int invul_frames) {
     int the_big_one = 0;
     
     for (int i = 0; i < MAX_EDGE_BLOCKS - (stage/2); i++) {
-        int rect_width = rand_range(0, (GRID_X / 3) - 1);
+        int rect_width = rand_range(0, (GRID_X_SIZE / 3) - 1);
         int rect_height;
-        int rect_abs_x_pos = rand_range(0, GRID_X - rect_width);
+        int rect_abs_x_pos = rand_range(0, GRID_X_SIZE - rect_width);
         bool on_ceiling = rand_range(0, 1);
         
         // stage 0-3 = 4 tall edge blocks, 4-7 = 3, ..., >= 16 = 0 tall blocks
@@ -68,10 +68,10 @@ char** generate_blocks(int stage, char chr, int invul_frames) {
         // the higher the stage, the lower the probability of a tall block generating in any one screen
         // e.g. stage 0 = 1/5 chance, 1 = 1/10, 2 = 1/15, etc.
         if (the_big_one < (MAX_TALL_EDGE_BLOCKS - (stage/4)) && rand_range(1, (stage+1) * 5) == 1) {
-            rect_height = rand_range(0, (GRID_Y / 2) - 1);
+            rect_height = rand_range(0, (GRID_Y_SIZE / 2) - 1);
             the_big_one++;
         } else {
-            rect_height = rand_range(0, (GRID_Y / 2) - (MIN_SHORT_TALL_BLOCK_DIFFERENCE - stage) - 1);
+            rect_height = rand_range(0, (GRID_Y_SIZE / 2) - (MIN_SHORT_TALL_BLOCK_DIFFERENCE - stage) - 1);
         }
 
         if (on_ceiling) {
@@ -92,12 +92,12 @@ char** generate_blocks(int stage, char chr, int invul_frames) {
             }
         } else {
             for (int x = 0; x < rect_width; x++) {
-                for (int y = GRID_Y - 1; y >= GRID_Y - rect_height; y--) {
+                for (int y = GRID_Y_SIZE - 1; y >= GRID_Y_SIZE - rect_height; y--) {
                     int edge_width = rand_range(0, 4);
                     int edge_height = rand_range(0, 4);
 
                     if ( (x <= edge_width || x >= rect_width - edge_width - 1) ||
-                         (y >= GRID_Y - edge_height - 1 || y <= GRID_Y - rect_height + edge_height) ||
+                         (y >= GRID_Y_SIZE - edge_height - 1 || y <= GRID_Y_SIZE - rect_height + edge_height) ||
                          chr != FULL_BLOCK)
                     {
                         new_screen[rect_abs_x_pos + x][y] = chr;
@@ -157,11 +157,11 @@ char weird_texture_formula(int x, int y, int stage, int invul_frames) {
 
 //////////////////////////////////////////////////////////////////
 
-bool should_generate_screen(char layer[GRID_X * 2][GRID_Y]) {
+bool should_generate_screen(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE]) {
     bool should_generate = true;
 
-    for (int x = GRID_X; x < GRID_X * 2; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
+    for (int x = GRID_X_SIZE; x < GRID_X_SIZE * 2; x++) {
+        for (int y = 0; y < GRID_Y_SIZE; y++) {
             if (layer[x][y] != ' ') {
                 should_generate = false;
             }

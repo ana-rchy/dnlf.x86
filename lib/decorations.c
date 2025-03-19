@@ -4,9 +4,9 @@
 #include <stdbool.h>
 
 // TODO: make this function more readable jfc
-void add_rods(char layer[GRID_X * 2][GRID_Y], char chr) {
-    for (int x = GRID_X; x < GRID_X * 2; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
+void add_rods(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], char chr) {
+    for (int x = GRID_X_SIZE; x < GRID_X_SIZE * 2; x++) {
+        for (int y = 0; y < GRID_Y_SIZE; y++) {
             if (rand_range(1, 64) != 1) {
                 continue;
             }
@@ -17,10 +17,10 @@ void add_rods(char layer[GRID_X * 2][GRID_Y], char chr) {
             // but only to the left for horizontal
             if (layer[x][y] == ' ') {
                 // - 1 for length to index, - 1 to be not on the edge
-                if (y <= GRID_Y - 2 && layer[x][y + 1] == chr) {
+                if (y <= GRID_Y_SIZE - 2 && layer[x][y + 1] == chr) {
                     rod_direction = 1;
                 }
-                if (x >= GRID_X + 1 && layer[x - 1][y] == chr) {
+                if (x >= GRID_X_SIZE + 1 && layer[x - 1][y] == chr) {
                     rod_direction = 2;
                 }
                 if (y >= 1 && layer[x][y - 1] == chr) {
@@ -36,7 +36,7 @@ void add_rods(char layer[GRID_X * 2][GRID_Y], char chr) {
                 break;
 
             case 2:
-                for (int x2 = x; x2 < GRID_X * 2 && layer[x2][y] != chr; x2++) {
+                for (int x2 = x; x2 < GRID_X_SIZE * 2 && layer[x2][y] != chr; x2++) {
                     if (rand_range(1, 10) == 1) {
                         layer[x2][y] = DOWN_T_LINE;
                     } else {
@@ -46,7 +46,7 @@ void add_rods(char layer[GRID_X * 2][GRID_Y], char chr) {
                 break;
 
             case 3:
-                for (int y2 = y; y2 < GRID_Y && layer[x][y2] != chr; y2++) {
+                for (int y2 = y; y2 < GRID_Y_SIZE && layer[x][y2] != chr; y2++) {
                     layer[x][y2] = VERT_LINE;
                 }
                 break;
@@ -54,25 +54,25 @@ void add_rods(char layer[GRID_X * 2][GRID_Y], char chr) {
         }
     }
 
-    for (int y = 0; y < GRID_Y; y++) {
+    for (int y = 0; y < GRID_Y_SIZE; y++) {
         // this should actually check if it could be a T too,
         // but we preserving all the bugs here so, Too bad!
-        if (layer[GRID_X - 1][y] == HORIZ_LINE && layer[GRID_X][y] == ' ') {
-            for (int x = GRID_X; x < GRID_X * 2 && layer[x][y] != chr; x++) {
+        if (layer[GRID_X_SIZE - 1][y] == HORIZ_LINE && layer[GRID_X_SIZE][y] == ' ') {
+            for (int x = GRID_X_SIZE; x < GRID_X_SIZE * 2 && layer[x][y] != chr; x++) {
                 layer[x][y] = HORIZ_LINE;
             }
         }
     }
 
-    for (int x = GRID_X; x < GRID_X * 2; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
-            bool leftwards = (x >= GRID_X + 1 && layer[x - 1][y] == HORIZ_LINE);
+    for (int x = GRID_X_SIZE; x < GRID_X_SIZE * 2; x++) {
+        for (int y = 0; y < GRID_Y_SIZE; y++) {
+            bool leftwards = (x >= GRID_X_SIZE + 1 && layer[x - 1][y] == HORIZ_LINE);
 
-            bool rightwards = (x <= (GRID_X*2) - 2 && layer[x + 1][y] == HORIZ_LINE);
+            bool rightwards = (x <= (GRID_X_SIZE*2) - 2 && layer[x + 1][y] == HORIZ_LINE);
 
             bool upwards = (y >= 1 && layer[x][y - 1] == VERT_LINE);
 
-            bool downwards = (y <= GRID_Y - 2 && layer[x][y + 1] == VERT_LINE);
+            bool downwards = (y <= GRID_Y_SIZE - 2 && layer[x][y + 1] == VERT_LINE);
 
             if (leftwards && rightwards && upwards && downwards) {
                 layer[x][y] = PLUS_LINE;
@@ -146,8 +146,8 @@ void update_particles(Particle particles[MAX_PARTICLES]) {
         particles[i].pos.x += particles[i].speed.x;
         particles[i].pos.y += particles[i].speed.y;
 
-        if (particles[i].pos.x < 0 || particles[i].pos.x >= (float) GRID_X ||
-            particles[i].pos.y < 0 || particles[i].pos.y >= (float) GRID_Y)
+        if (particles[i].pos.x < 0 || particles[i].pos.x >= (float) GRID_X_SIZE ||
+            particles[i].pos.y < 0 || particles[i].pos.y >= (float) GRID_Y_SIZE)
         {
             particles[i].group = "";
             continue;

@@ -5,7 +5,7 @@
 #include <raylib.h>
 
 void reset_player(Player* player) {
-    player->y = PLAYER_START_Y;
+    player->y = PLAYER_START_Y_POS;
     player->y_speed = 0;
     player->y_accel = PLAYER_Y_ACCEL;
     // in OG, char is set to 'v' only on init, not on reset
@@ -23,7 +23,7 @@ void reset_player(Player* player) {
 // ...also, particles can affect physics.
 // Too bad!
 void update_player(Player* player, Particle particles[MAX_PARTICLES], float total_distance, GameState* game_state) {
-    char in_front = screen[PLAYER_X + 1][(int) player->y];
+    char in_front = screen[PLAYER_X_POS + 1][(int) player->y];
 
     if (in_front >= FULL_BLOCK && in_front <= RIGHT_HALF) {
         if (player->invul_frames == 0) {
@@ -33,7 +33,7 @@ void update_player(Player* player, Particle particles[MAX_PARTICLES], float tota
 
             for (int i = 0; i < 3; i++) {
                 insert_new_particle(
-                    (Vector2) { PLAYER_X - 1, player->y },
+                    (Vector2) { PLAYER_X_POS - 1, player->y },
                     (Vector2) { 
                         (float) rand_range(-30, -1) / 20.0,
                         (float) rand_range(-30, 30) / 20.0
@@ -55,7 +55,7 @@ void update_player(Player* player, Particle particles[MAX_PARTICLES], float tota
     }
     
     if (player->y_accel < 0) {
-        if (player->y > 0 && screen[PLAYER_X][(int) player->y - 1] != FULL_BLOCK) {
+        if (player->y > 0 && screen[PLAYER_X_POS][(int) player->y - 1] != FULL_BLOCK) {
             player->y_speed += player->y_accel;
         } else {
             player->y_speed = 0;
@@ -69,7 +69,7 @@ void update_player(Player* player, Particle particles[MAX_PARTICLES], float tota
             }
         }
     } else if (player->y_accel > 0) {
-        if (player->y < (float) GRID_Y - 1 && screen[PLAYER_X][(int) player->y + 1] != FULL_BLOCK) {
+        if (player->y < (float) GRID_Y_SIZE - 1 && screen[PLAYER_X_POS][(int) player->y + 1] != FULL_BLOCK) {
             player->y_speed += player->y_accel;
         } else {
             player->y_speed = 0;
@@ -92,13 +92,13 @@ void update_player(Player* player, Particle particles[MAX_PARTICLES], float tota
 
     player->y += player->y_speed;
 
-    float push_direction = (player->y < (float) GRID_Y / 2) ? 1 : -1;
+    float push_direction = (player->y < (float) GRID_Y_SIZE / 2) ? 1 : -1;
 
     // BUG:
     // OG only checks for FULL_BLOCK, so we do the same
     // Too bad!
-    while (screen[PLAYER_X][(int) player->y] == FULL_BLOCK ||
-           player->y < 0 || player->y >= (float) GRID_Y)
+    while (screen[PLAYER_X_POS][(int) player->y] == FULL_BLOCK ||
+           player->y < 0 || player->y >= (float) GRID_Y_SIZE)
     {
         player->y += push_direction;
         player->y_speed = 0;

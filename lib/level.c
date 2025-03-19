@@ -6,18 +6,18 @@
 #include <math.h>
 #include <raylib.h>
 
-void setup_layer(char layer[GRID_X * 2][GRID_Y], char chr) {
+void setup_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], char chr) {
     char** screen_1 = generate_blocks(0, chr, 0);
     char** screen_2 = generate_blocks(0, chr, 0);
 
-    for (int x = 0; x < GRID_X; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
+    for (int x = 0; x < GRID_X_SIZE; x++) {
+        for (int y = 0; y < GRID_Y_SIZE; y++) {
             layer[x][y] = screen_1[x][y];
-            layer[GRID_X + x][y] = screen_2[x][y];
+            layer[GRID_X_SIZE + x][y] = screen_2[x][y];
         }
     }
 
-    for (int x = 0; x < GRID_X; x++) {
+    for (int x = 0; x < GRID_X_SIZE; x++) {
         free(screen_1[x]);
         free(screen_2[x]);
     }
@@ -27,9 +27,9 @@ void setup_layer(char layer[GRID_X * 2][GRID_Y], char chr) {
     add_rods(layer, chr);
 }
 
-void setup_foreground(char fg[GRID_X * 2][GRID_Y]) {
-    for (int x = 0; x < GRID_X; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
+void setup_foreground(char fg[GRID_X_SIZE * 2][GRID_Y_SIZE]) {
+    for (int x = 0; x < GRID_X_SIZE; x++) {
+        for (int y = 0; y < GRID_Y_SIZE; y++) {
             fg[x][y] = ' ';
        }
     }
@@ -43,7 +43,7 @@ void setup_foreground(char fg[GRID_X * 2][GRID_Y]) {
     }
 
     for (int x = 0; x < 76; x++) {
-        for (int y = GRID_Y - 12; y < GRID_Y; y++) {
+        for (int y = GRID_Y_SIZE - 12; y < GRID_Y_SIZE; y++) {
             if ((x % 8) < 4) {
                 fg[x][y] = FULL_BLOCK;
             }
@@ -57,7 +57,7 @@ void setup_foreground(char fg[GRID_X * 2][GRID_Y]) {
     }
 
     for (int x = 0; x < 96; x++) {
-        for (int y = GRID_Y - 12 - 8; y < GRID_Y - 12; y++) {
+        for (int y = GRID_Y_SIZE - 12 - 8; y < GRID_Y_SIZE - 12; y++) {
             fg[x][y] = FULL_BLOCK;
         }
     }
@@ -65,31 +65,31 @@ void setup_foreground(char fg[GRID_X * 2][GRID_Y]) {
 
     char** next_screen = generate_blocks(0, FULL_BLOCK, 0);
 
-    for (int x = 0; x < GRID_X; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
-            fg[GRID_X + x][y] = next_screen[x][y];
+    for (int x = 0; x < GRID_X_SIZE; x++) {
+        for (int y = 0; y < GRID_Y_SIZE; y++) {
+            fg[GRID_X_SIZE + x][y] = next_screen[x][y];
         }
     }
 
-    for (int x = 0; x < GRID_X; x++) {
+    for (int x = 0; x < GRID_X_SIZE; x++) {
         free(next_screen[x]);
     }
     free(next_screen);
 }
 
-void extend_layer_if_needed(char layer[GRID_X * 2][GRID_Y], int stage, char chr, int invul_frames) {
+void extend_layer_if_needed(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], int stage, char chr, int invul_frames) {
     if (!should_generate_screen(layer)) {
         return;
     }
 
     char** new_screen = generate_blocks(stage, chr, invul_frames);
-    for (int x = 0; x < GRID_X; x++) {
-        for (int y = 0; y < GRID_Y; y++) {
-            layer[GRID_X + x][y] = new_screen[x][y];
+    for (int x = 0; x < GRID_X_SIZE; x++) {
+        for (int y = 0; y < GRID_Y_SIZE; y++) {
+            layer[GRID_X_SIZE + x][y] = new_screen[x][y];
         }
     }
 
-    for (int x = 0; x < GRID_X; x++) {
+    for (int x = 0; x < GRID_X_SIZE; x++) {
         free(new_screen[x]);
     }
     free(new_screen);
@@ -99,17 +99,17 @@ void extend_layer_if_needed(char layer[GRID_X * 2][GRID_Y], int stage, char chr,
 
 //////////////////////////////////////////////////////////////////
 
-void scroll_layer(char layer[GRID_X * 2][GRID_Y]) {
-    for (int y = 0; y < GRID_Y; y++) {
-        for (int x = 1; x < GRID_X * 2; x++) {
+void scroll_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE]) {
+    for (int y = 0; y < GRID_Y_SIZE; y++) {
+        for (int x = 1; x < GRID_X_SIZE * 2; x++) {
             layer[x - 1][y] = layer[x][y];
        }
 
-        layer[GRID_X * 2 - 1][y] = ' ';
+        layer[GRID_X_SIZE * 2 - 1][y] = ' ';
     }
 }
 
-void scroll_and_extend_layer(char layer[GRID_X * 2][GRID_Y], int stage, char chr, float distance, float* distance_overflow, int invul_frames) {
+void scroll_and_extend_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], int stage, char chr, float distance, float* distance_overflow, int invul_frames) {
     *distance_overflow += fmod(distance, 1);
 
     if (*distance_overflow >= 1) {

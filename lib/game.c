@@ -15,10 +15,10 @@ bool run_menu_init = true;
 bool run_game_init = true;
 bool run_death_init = true;
 
-char foreground[GRID_X * 2][GRID_Y],
-     background_1[GRID_X * 2][GRID_Y],
-     background_2[GRID_X * 2][GRID_Y],
-     ui[GRID_X][GRID_Y];
+char foreground[GRID_X_SIZE * 2][GRID_Y_SIZE],
+     background_1[GRID_X_SIZE * 2][GRID_Y_SIZE],
+     background_2[GRID_X_SIZE * 2][GRID_Y_SIZE],
+     ui[GRID_X_SIZE][GRID_Y_SIZE];
 float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow = 0;
 
 int stage = 0;
@@ -81,12 +81,12 @@ void menu_loop() {
     draw_big_font("DO          NOT", MENU_DO_NOT_X_POS, MENU_DO_NOT_Y_POS, FULL_BLOCK);
     draw_big_font("LOSE          FOCUS", MENU_LOSE_FOCUS_X_POS, MENU_LOSE_FOCUS_Y_POS, FULL_BLOCK);
 
-    draw_icon((int*) ICON_PLAY_ARROW, MENU_PLAY_ARROW_X_POS, MENU_PLAY_ARROW_Y_POS, BIG_FONT_X_SIZE, BIG_FONT_Y_SIZE);
-    draw_icon((int*) ICON_EXIT_DOOR, MENU_EXIT_DOOR_X_POS, MENU_EXIT_DOOR_Y_POS, BIG_FONT_X_SIZE, BIG_FONT_Y_SIZE);
+    draw_icon((int*) ICON_PLAY_ARROW, MENU_PLAY_ARROW_X_POS, MENU_PLAY_ARROW_Y_POS, ICON_PLAY_ARROW_X_SIZE, ICON_PLAY_ARROW_Y_SIZE);
+    draw_icon((int*) ICON_EXIT_DOOR, MENU_EXIT_DOOR_X_POS, MENU_EXIT_DOOR_Y_POS, ICON_EXIT_DOOR_X_SIZE, ICON_EXIT_DOOR_Y_SIZE);
 
     if (rand_range(0, 1) == 1) {
         insert_new_particle(
-            (Vector2) { (float) GRID_X - 1, rand_range(0, GRID_Y - 1) },
+            (Vector2) { (float) GRID_X_SIZE - 1, rand_range(0, GRID_Y_SIZE - 1) },
             (Vector2) { ((float) rand_range(-29, 0) / 10) - 1, 0 },
             (Vector2) { 0, 0 },
             (char[PARTICLE_STATES]) { '*', '*' },
@@ -159,7 +159,7 @@ void ingame_particles_loop() {
     update_particles(particles);
 
     insert_new_particle(
-        (Vector2) { PLAYER_X, player.y },
+        (Vector2) { PLAYER_X_POS, player.y },
         (Vector2) { -scroll_speed, 0 },
         (Vector2) { 0, 0 },
         (char[PARTICLE_STATES]) { '+', '-' },
@@ -171,7 +171,7 @@ void ingame_particles_loop() {
 
     if (rand_range(1, 10) == 1) {
         insert_new_particle(
-            (Vector2) { (float) GRID_X - 1, rand_range(0, GRID_Y - 1) },
+            (Vector2) { (float) GRID_X_SIZE - 1, rand_range(0, GRID_Y_SIZE - 1) },
             (Vector2) { -scroll_speed * rand_range(2, 4), 0 },
             (Vector2) { 0, 0 },
             (char[PARTICLE_STATES]) { '-', '*' },
@@ -214,7 +214,7 @@ void death_init() {
 
     for (int i = 0; i < 20; i++) {
         insert_new_particle(
-            (Vector2) { PLAYER_X, player.y },
+            (Vector2) { PLAYER_X_POS, player.y },
             (Vector2) {
                 (float) rand_range(-30, 30) / 20,
                 (float) rand_range(-30, 30) / 20
