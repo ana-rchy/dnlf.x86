@@ -1,0 +1,31 @@
+#include "layer.h"
+#include "defines.h"
+
+void move_screen_to_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], char** screen, bool is_next_screen) {
+    int start_x = is_next_screen ? GRID_X_SIZE : 0;
+
+    for (int x = 0; x < GRID_X_SIZE; x++) {
+        for (int y = 0; y < GRID_Y_SIZE; y++) {
+            layer[start_x + x][y] = screen[x][y];
+        }
+    }
+
+    for (int x = 0; x < GRID_X_SIZE; x++) {
+        free(screen[x]);
+    }
+
+    free(screen);
+}
+
+void shift_layer_left_by(int shift_amount, char layer[GRID_X_SIZE * 2][GRID_Y_SIZE]) {
+    for (int y = 0; y < GRID_Y_SIZE; y++) {
+        for (int x = shift_amount; x < GRID_X_SIZE * 2; x++) {
+            layer[x - shift_amount][y] = layer[x][y];
+        }
+        
+        // clear columns that havent been replaced by smth else
+        for (int x = GRID_X_SIZE * 2 - shift_amount; x < GRID_X_SIZE * 2; x++) {
+            layer[x][y] = ' ';
+        }
+    } 
+}

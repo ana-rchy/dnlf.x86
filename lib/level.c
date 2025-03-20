@@ -2,7 +2,7 @@
 #include "defines.h"
 #include "level_gen.h"
 #include "decorations.h"
-#include "renderer.h"
+#include "layer.h"
 #include <stdbool.h>
 #include <math.h>
 #include <raylib.h>
@@ -64,17 +64,7 @@ void extend_layer_if_needed(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], int stage,
 
 //////////////////////////////////////////////////////////////////
 
-void scroll_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE]) {
-    for (int y = 0; y < GRID_Y_SIZE; y++) {
-        for (int x = 1; x < GRID_X_SIZE * 2; x++) {
-            layer[x - 1][y] = layer[x][y];
-       }
-
-        layer[GRID_X_SIZE * 2 - 1][y] = ' ';
-    }
-}
-
-void scroll_and_extend_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], int stage, char chr, float distance, float* distance_overflow, int invul_frames) {
+void shift_left_and_extend_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], int stage, char chr, float distance, float* distance_overflow, int invul_frames) {
     *distance_overflow += fmod(distance, 1);
 
     if (*distance_overflow >= 1) {
@@ -83,7 +73,7 @@ void scroll_and_extend_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], int stage
     }
 
     for (int i = 0; i < (int) distance; i++) {
-        scroll_layer(layer);
+        shift_layer_left_by(1, layer);
         extend_layer_if_needed(layer, stage, chr, invul_frames);
     }
 }

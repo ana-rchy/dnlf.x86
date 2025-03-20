@@ -39,22 +39,12 @@ void draw_and_flush_screen(Color fg_color, Color bg_color) {
     }
 }
 
-//////////////////////////////////////////////////////////////////
-
-void move_screen_to_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], char** screen, bool is_next_screen) {
-    int start_x = is_next_screen ? GRID_X_SIZE : 0;
-
+void flush_screen() {
     for (int x = 0; x < GRID_X_SIZE; x++) {
         for (int y = 0; y < GRID_Y_SIZE; y++) {
-            layer[start_x + x][y] = screen[x][y];
+            screen[x][y] = ' ';
         }
     }
-
-    for (int x = 0; x < GRID_X_SIZE; x++) {
-        free(screen[x]);
-    }
-
-    free(screen);
 }
 
 //////////////////////////////////////////////////////////////////

@@ -110,6 +110,9 @@ void menu_loop() {
 
 //////////////////////////////////////////////////////////////////
 
+// yoink the main `screen` with no particles and just text/icons, onto the anim layer
+// then do it again for the loading text, onto the future part of the anim layer
+// a bit cursed but it works
 void loading_init() {
     
 }
@@ -118,6 +121,7 @@ void loading_loop() {
     
 }
 
+// same as loading_init()
 void exiting_init() {
 
 }
@@ -175,9 +179,9 @@ void ingame_level_loop() {
     total_distance += scroll_speed;
     scroll_speed += SCROLL_SPEED_ACCELERATION;
 
-    scroll_and_extend_layer(foreground, stage, FULL_BLOCK, scroll_speed, &fg_scroll_overflow, player.invul_frames);
-    scroll_and_extend_layer(background_1, stage, DITHER_1, scroll_speed / BG_1_PARALLAX_DIVIDER, &bg_1_scroll_overflow, player.invul_frames);
-    scroll_and_extend_layer(background_2, stage, DITHER_3, scroll_speed / BG_2_PARALLAX_DIVIDER, &bg_2_scroll_overflow, player.invul_frames);
+    shift_left_and_extend_layer(foreground, stage, FULL_BLOCK, scroll_speed, &fg_scroll_overflow, player.invul_frames);
+    shift_left_and_extend_layer(background_1, stage, DITHER_1, scroll_speed / BG_1_PARALLAX_DIVIDER, &bg_1_scroll_overflow, player.invul_frames);
+    shift_left_and_extend_layer(background_2, stage, DITHER_3, scroll_speed / BG_2_PARALLAX_DIVIDER, &bg_2_scroll_overflow, player.invul_frames);
 }
 
 void ingame_particles_loop() {
