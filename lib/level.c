@@ -2,28 +2,15 @@
 #include "defines.h"
 #include "level_gen.h"
 #include "decorations.h"
+#include "renderer.h"
 #include <stdbool.h>
 #include <math.h>
 #include <raylib.h>
 
 void setup_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], char chr) {
-    char** screen_1 = generate_blocks(0, chr, 0);
-    char** screen_2 = generate_blocks(0, chr, 0);
-
-    for (int x = 0; x < GRID_X_SIZE; x++) {
-        for (int y = 0; y < GRID_Y_SIZE; y++) {
-            layer[x][y] = screen_1[x][y];
-            layer[GRID_X_SIZE + x][y] = screen_2[x][y];
-        }
-    }
-
-    for (int x = 0; x < GRID_X_SIZE; x++) {
-        free(screen_1[x]);
-        free(screen_2[x]);
-    }
-    free(screen_1);
-    free(screen_2);
-
+    move_screen_to_layer(layer, generate_blocks(0, chr, 0), false);
+    move_screen_to_layer(layer, generate_blocks(0, chr, 0), true);
+    
     add_rods(layer, chr);
 }
 
@@ -63,18 +50,7 @@ void setup_foreground(char fg[GRID_X_SIZE * 2][GRID_Y_SIZE]) {
     }
 
 
-    char** next_screen = generate_blocks(0, FULL_BLOCK, 0);
-
-    for (int x = 0; x < GRID_X_SIZE; x++) {
-        for (int y = 0; y < GRID_Y_SIZE; y++) {
-            fg[GRID_X_SIZE + x][y] = next_screen[x][y];
-        }
-    }
-
-    for (int x = 0; x < GRID_X_SIZE; x++) {
-        free(next_screen[x]);
-    }
-    free(next_screen);
+    move_screen_to_layer(fg, generate_blocks(0, FULL_BLOCK, 0), true);
 }
 
 void extend_layer_if_needed(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], int stage, char chr, int invul_frames) {
@@ -82,18 +58,7 @@ void extend_layer_if_needed(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], int stage,
         return;
     }
 
-    char** new_screen = generate_blocks(stage, chr, invul_frames);
-    for (int x = 0; x < GRID_X_SIZE; x++) {
-        for (int y = 0; y < GRID_Y_SIZE; y++) {
-            layer[GRID_X_SIZE + x][y] = new_screen[x][y];
-        }
-    }
-
-    for (int x = 0; x < GRID_X_SIZE; x++) {
-        free(new_screen[x]);
-    }
-    free(new_screen);
-
+    move_screen_to_layer(layer, generate_blocks(stage, chr, invul_frames), true);
     add_rods(layer, chr);
 }
 

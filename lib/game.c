@@ -14,11 +14,13 @@ GameState game_state = Ingame;
 bool run_menu_init = true;
 bool run_game_init = true;
 bool run_death_init = true;
+bool run_loading_init = true;
+bool run_exiting_init = true;
 
 char foreground[GRID_X_SIZE * 2][GRID_Y_SIZE],
      background_1[GRID_X_SIZE * 2][GRID_Y_SIZE],
      background_2[GRID_X_SIZE * 2][GRID_Y_SIZE],
-     ui[GRID_X_SIZE][GRID_Y_SIZE];
+     animation_layer[GRID_X_SIZE * 2][GRID_Y_SIZE];
 float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow = 0;
 
 int stage = 0;
@@ -47,6 +49,12 @@ void game_loop() {
             menu_loop();
             break;
 
+        case Loading:
+            break;
+
+        case Exiting:
+            break;
+
         case Ingame:
             if (run_game_init) {
                 ingame_init();
@@ -64,7 +72,7 @@ void game_loop() {
             break;
     }
 
-    output_screen(fg_color, bg_color);
+    draw_and_flush_screen(fg_color, bg_color);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -98,6 +106,24 @@ void menu_loop() {
     }
 
     update_particles(particles);
+}
+
+//////////////////////////////////////////////////////////////////
+
+void loading_init() {
+    
+}
+
+void loading_loop() {
+    
+}
+
+void exiting_init() {
+
+}
+
+void exiting_loop() {
+
 }
 
 //////////////////////////////////////////////////////////////////

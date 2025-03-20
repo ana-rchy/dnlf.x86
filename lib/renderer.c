@@ -8,7 +8,7 @@
 char screen[GRID_X_SIZE][GRID_Y_SIZE];
 Font font;
 
-void setup_renderer() {
+void setup_terminal_font() {
     font = LoadFont("font.png");
 }
 
@@ -21,7 +21,7 @@ void draw_char(char c, int x, int y) {
     screen[x][y] = c;
 }
 
-void output_screen(Color fg_color, Color bg_color) {
+void draw_and_flush_screen(Color fg_color, Color bg_color) {
     for (int x = 0; x < GRID_X_SIZE; x++) {
         for (int y = 0; y < GRID_Y_SIZE; y++) {
             Vector2 pos = { x * UNIT_X_SIZE, y * UNIT_Y_SIZE };
@@ -37,6 +37,24 @@ void output_screen(Color fg_color, Color bg_color) {
             screen[x][y] = ' ';
         }
     }
+}
+
+//////////////////////////////////////////////////////////////////
+
+void move_screen_to_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], char** screen, bool is_next_screen) {
+    int start_x = is_next_screen ? GRID_X_SIZE : 0;
+
+    for (int x = 0; x < GRID_X_SIZE; x++) {
+        for (int y = 0; y < GRID_Y_SIZE; y++) {
+            layer[start_x + x][y] = screen[x][y];
+        }
+    }
+
+    for (int x = 0; x < GRID_X_SIZE; x++) {
+        free(screen[x]);
+    }
+
+    free(screen);
 }
 
 //////////////////////////////////////////////////////////////////

@@ -10,7 +10,7 @@ int main() {
     InitWindow(SCREEN_X_SIZE, SCREEN_Y_SIZE, "DO NOT LOSE FOCUS.x86");
     SetTargetFPS(60);
 
-    setup_renderer();
+    setup_terminal_font();
 
     srand(time(NULL));
 
