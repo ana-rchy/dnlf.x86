@@ -1,6 +1,7 @@
 #include "game.h"
 #include "defines.h"
 #include "font.h"
+#include "layer.h"
 #include "renderer.h"
 #include "level.h"
 #include "decorations.h"
@@ -10,7 +11,7 @@
 #include <raylib.h>
 
 
-GameState game_state = Ingame;
+GameState game_state = Menu;
 bool run_menu_init = true;
 bool run_game_init = true;
 bool run_death_init = true;
@@ -21,13 +22,15 @@ char foreground[GRID_X_SIZE * 2][GRID_Y_SIZE],
      background_1[GRID_X_SIZE * 2][GRID_Y_SIZE],
      background_2[GRID_X_SIZE * 2][GRID_Y_SIZE],
      animation_layer[GRID_X_SIZE * 2][GRID_Y_SIZE];
-float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow = 0;
+float fg_scroll_overflow, bg_1_scroll_overflow, bg_2_scroll_overflow, animation_shift_overflow = 0;
 
 int stage = 0;
 float time_since_game_start = 0;
 
 float scroll_speed = 1;
 float total_distance = 0;
+
+float animation_shift_distance = 1;
 
 Color bg_color = DNLF_WHITE;
 Color fg_color = DNLF_BLACK;
@@ -50,9 +53,19 @@ void game_loop() {
             break;
 
         case Loading:
+            if (run_loading_init) {
+                loading_init();
+            }
+
+            loading_loop();
             break;
 
         case Exiting:
+            if (run_exiting_init) {
+                exiting_init();
+            }
+
+            exiting_loop();
             break;
 
         case Ingame:
@@ -106,6 +119,10 @@ void menu_loop() {
     }
 
     update_particles(particles);
+
+    if (IsKeyPressed(KEY_SPACE)) {
+        game_state = Loading;
+    }
 }
 
 //////////////////////////////////////////////////////////////////
@@ -114,16 +131,70 @@ void menu_loop() {
 // then do it again for the loading text, onto the future part of the anim layer
 // a bit cursed but it works
 void loading_init() {
-    
+    run_loading_init = false;
+
+    draw_big_font("DO          NOT", MENU_DO_NOT_X_POS, MENU_DO_NOT_Y_POS, FULL_BLOCK);
+    draw_big_font("LOSE          FOCUS", MENU_LOSE_FOCUS_X_POS, MENU_LOSE_FOCUS_Y_POS, FULL_BLOCK);
+    draw_icon((int*) ICON_PLAY_ARROW, MENU_PLAY_ARROW_X_POS, MENU_PLAY_ARROW_Y_POS, ICON_PLAY_ARROW_X_SIZE, ICON_PLAY_ARROW_Y_SIZE);
+    draw_icon((int*) ICON_EXIT_DOOR, MENU_EXIT_DOOR_X_POS, MENU_EXIT_DOOR_Y_POS, ICON_EXIT_DOOR_X_SIZE, ICON_EXIT_DOOR_Y_SIZE);
+
+    move_2d_array_screen_to_layer(animation_layer, screen, false);
+    flush_screen();
+
+    draw_big_font("LOADING", LOADING_X_POS, LOADING_Y_POS, FULL_BLOCK);
+    draw_icon((int*) ICON_HOURGLASS, LOADING_HOURGLASS_X_POS, LOADING_HOURGLASS_Y_POS, ICON_HOURGLASS_X_SIZE, ICON_HOURGLASS_Y_SIZE);
+
+    move_2d_array_screen_to_layer(animation_layer, screen, true);
+    flush_screen();
 }
 
 void loading_loop() {
-    
+    draw_particles(particles);
+    draw_layer(animation_layer);
+
+
+    float prev_anim_shift_dist = animation_shift_distance == 1 ? 0 : animation_shift_distance;
+
+    if (animation_shift_distance > 0) {
+        animation_shift_distance += ((float) GRID_X_SIZE - animation_shift_distance) / 10;
+    }
+
+    if (animation_shift_distance + 0.01 >= (float) GRID_X_SIZE) {
+        animation_shift_distance = 0;
+    }
+
+    float anim_shift_speed = animation_shift_distance - prev_anim_shift_dist;
+
+    animation_shift_overflow += fmod(anim_shift_speed, 1);
+
+    if (animation_shift_overflow >= 1) {
+        anim_shift_speed += (int) animation_shift_overflow;
+        animation_shift_overflow = fmod(animation_shift_overflow, 1);
+    }
+
+
+    shift_layer_left_by(anim_shift_speed, animation_layer);
+
+
+    if (rand_range(0, 1) == 1) {
+        insert_new_particle(
+            (Vector2) { (float) GRID_X_SIZE - 1, rand_range(0, GRID_Y_SIZE - 1) },
+            (Vector2) { ((float) rand_range(-29, 0) / 10) - 1, 0 },
+            (Vector2) { 0, 0 },
+            (char[PARTICLE_STATES]) { '*', '*' },
+            0,
+            -1,
+            "fly-by",
+            particles
+        );
+    }
+
+    update_particles(particles);
 }
 
 // same as loading_init()
 void exiting_init() {
-
+    run_exiting_init = false;
 }
 
 void exiting_loop() {
@@ -157,7 +228,10 @@ void ingame_init() {
 }
 
 void ingame_loop() {
-    draw_level(foreground, background_1, background_2);
+    draw_layer(background_2);
+    draw_layer(background_1);
+    draw_layer(foreground);
+
     draw_particles(particles);
     draw_player(&player);
 
@@ -268,7 +342,10 @@ void death_init() {
 }
 
 void death_loop() {
-    draw_level(foreground, background_1, background_2);
+    draw_layer(background_2);
+    draw_layer(background_1);
+    draw_layer(foreground);
+
     draw_particles(particles);
 
     draw_invul_frames(player.invul_frames, player.invul_frames_max);

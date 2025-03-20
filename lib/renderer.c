@@ -21,6 +21,16 @@ void draw_char(char c, int x, int y) {
     screen[x][y] = c;
 }
 
+void draw_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE]) {
+    for (int x = 0; x < GRID_X_SIZE; x++) {
+        for (int y = 0; y < GRID_Y_SIZE; y++) {
+            if (layer[x][y] != ' ') {
+                draw_char(layer[x][y], x, y);
+            }
+        }
+    }
+}
+
 void draw_and_flush_screen(Color fg_color, Color bg_color) {
     for (int x = 0; x < GRID_X_SIZE; x++) {
         for (int y = 0; y < GRID_Y_SIZE; y++) {
@@ -48,22 +58,6 @@ void flush_screen() {
 }
 
 //////////////////////////////////////////////////////////////////
-
-void draw_level(char foreground[GRID_X_SIZE * 2][GRID_Y_SIZE], char background_1[GRID_X_SIZE * 2][GRID_Y_SIZE], char background_2[GRID_X_SIZE * 2][GRID_Y_SIZE]) {
-    for (int x = 0; x < GRID_X_SIZE; x++) {
-        for (int y = 0; y < GRID_Y_SIZE; y++) {
-            draw_char(background_2[x][y], x, y);
-
-            if (background_1[x][y] != ' ') {
-                draw_char(background_1[x][y], x, y);
-            }
-
-            if (foreground[x][y] != ' ') {
-                draw_char(foreground[x][y], x, y);
-            }
-       }
-    }
-}
 
 void draw_particles(Particle particles[MAX_PARTICLES]) {
     for (int i = 0; i < MAX_PARTICLES; i++) {

@@ -8,10 +8,10 @@ extern char screen[GRID_X_SIZE][GRID_Y_SIZE];
 
 void setup_terminal_font();
 void draw_char(char c, int x, int y);
+void draw_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE]);
 void draw_and_flush_screen(Color fg_color, Color bg_color);
 void flush_screen();
 
-void draw_level(char foreground[GRID_X_SIZE * 2][GRID_Y_SIZE], char background_1[GRID_X_SIZE * 2][GRID_Y_SIZE], char background_2[GRID_X_SIZE * 2][GRID_Y_SIZE]);
 void draw_particles(Particle particles[MAX_PARTICLES]);
 void draw_player(Player* player);
 

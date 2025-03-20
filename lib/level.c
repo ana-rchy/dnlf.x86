@@ -72,6 +72,8 @@ void shift_left_and_extend_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], int s
         *distance_overflow = fmod(*distance_overflow, 1);
     }
 
+    // if smth shifts from x 128 to 126 and then extends, it leaves a column gap
+    // so the for loop with 1-shifts instead ensure that wont happen
     for (int i = 0; i < (int) distance; i++) {
         shift_layer_left_by(1, layer);
         extend_layer_if_needed(layer, stage, chr, invul_frames);

@@ -55,6 +55,16 @@
 #define MENU_EXIT_DOOR_X_POS 66
 #define MENU_EXIT_DOOR_Y_POS MENU_PLAY_ARROW_Y_POS
 
+// loading/exiting
+// NOTE: it looks like the x pos is 11 in the og when the loading anim stops moving,
+// BUT the text actually only moves 127 units, not 128 units
+// which means that the text is actually x pos 10 originally on the future screen
+// ...this shit took me 12 hours to figure out
+#define LOADING_X_POS 11 - 1
+#define LOADING_Y_POS 20
+#define LOADING_HOURGLASS_X_POS 82 - 1
+#define LOADING_HOURGLASS_Y_POS LOADING_Y_POS
+
 // ingame
 #define SCORE_X_POS 1
 #define SCORE_Y_POS 1
