@@ -288,9 +288,8 @@ void exiting_loop() {
 
 
     if (animation_shift_distance + 0.01 >= (float) GRID_X_SIZE) {
-        // BUG: this segfaults
-        // i mean... it closes the window so /shrug
         CloseWindow();
+        exit(0);
     }
 }
 
