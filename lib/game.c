@@ -13,7 +13,7 @@
 
 GameState game_state = Menu;
 bool run_menu_init = true;
-bool run_game_init = true;
+bool run_ingame_init = true;
 bool run_death_init = true;
 bool run_loading_init = true;
 bool run_exiting_init = true;
@@ -70,7 +70,7 @@ void game_loop() {
             break;
 
         case Ingame:
-            if (run_game_init) {
+            if (run_ingame_init) {
                 ingame_init();
             }
 
@@ -91,6 +91,7 @@ void game_loop() {
 
 //////////////////////////////////////////////////////////////////
 
+// BUG: we dont reset the color here because in the og it doesnt either :^)
 void menu_init() {
     run_menu_init = false;
 
@@ -131,7 +132,24 @@ void menu_loop() {
     };
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), play_arrow_rect)) {
+        run_menu_init = true;
+        run_loading_init = true;
         game_state = Loading;
+    }
+
+
+    Rectangle exit_door_rect = {
+        MENU_EXIT_DOOR_X_POS * UNIT_X_SIZE,
+        MENU_EXIT_DOOR_Y_POS * UNIT_Y_SIZE,
+        ICON_EXIT_DOOR_X_SIZE * UNIT_X_SIZE,
+        ICON_EXIT_DOOR_Y_SIZE * UNIT_Y_SIZE,
+    };
+
+    if ((IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), exit_door_rect)) ||
+        IsKeyPressed(KEY_ESCAPE))
+    {
+        run_exiting_init = true;
+        game_state = Exiting;
     }
 }
 
@@ -144,6 +162,7 @@ void loading_init() {
     run_loading_init = false;
     animation_shift_distance = 1;
 
+
     draw_big_font("DO          NOT", MENU_DO_NOT_X_POS, MENU_DO_NOT_Y_POS, FULL_BLOCK);
     draw_big_font("LOSE          FOCUS", MENU_LOSE_FOCUS_X_POS, MENU_LOSE_FOCUS_Y_POS, FULL_BLOCK);
     draw_icon((int*) ICON_PLAY_ARROW, MENU_PLAY_ARROW_X_POS, MENU_PLAY_ARROW_Y_POS, ICON_PLAY_ARROW_X_SIZE, ICON_PLAY_ARROW_Y_SIZE);
@@ -151,6 +170,7 @@ void loading_init() {
 
     move_2d_array_screen_to_layer(animation_layer, screen, false);
     flush_screen();
+
 
     draw_big_font("LOADING", LOADING_X_POS, LOADING_Y_POS, FULL_BLOCK);
     draw_icon((int*) ICON_HOURGLASS, LOADING_HOURGLASS_X_POS, LOADING_HOURGLASS_Y_POS, ICON_HOURGLASS_X_SIZE, ICON_HOURGLASS_Y_SIZE);
@@ -207,16 +227,77 @@ void loading_loop() {
 // same as loading_init()
 void exiting_init() {
     run_exiting_init = false;
+    animation_shift_distance = 1;
+
+
+    draw_big_font("DO          NOT", MENU_DO_NOT_X_POS, MENU_DO_NOT_Y_POS, FULL_BLOCK);
+    draw_big_font("LOSE          FOCUS", MENU_LOSE_FOCUS_X_POS, MENU_LOSE_FOCUS_Y_POS, FULL_BLOCK);
+    draw_icon((int*) ICON_PLAY_ARROW, MENU_PLAY_ARROW_X_POS, MENU_PLAY_ARROW_Y_POS, ICON_PLAY_ARROW_X_SIZE, ICON_PLAY_ARROW_Y_SIZE);
+    draw_icon((int*) ICON_EXIT_DOOR, MENU_EXIT_DOOR_X_POS, MENU_EXIT_DOOR_Y_POS, ICON_EXIT_DOOR_X_SIZE, ICON_EXIT_DOOR_Y_SIZE);
+
+    move_2d_array_screen_to_layer(animation_layer, screen, false);
+    flush_screen();
+
+
+    draw_big_font("THANKS          FOR", EXITING_THANKS_FOR_X_POS, EXITING_THANKS_FOR_Y_POS, FULL_BLOCK);
+    draw_big_font("PLAYING", EXITING_PLAYING_X_POS, EXITING_PLAYING_Y_POS, FULL_BLOCK);
+    draw_icon((int*) ICON_EXCLAMATION, EXITING_EXCLAMATION_X_POS, EXITING_EXCLAMATION_Y_POS, ICON_EXCLAMATION_X_SIZE, ICON_EXCLAMATION_Y_SIZE);
+    draw_icon((int*) ICON_HEART, EXITING_HEART_X_POS, EXITING_HEART_Y_POS, ICON_HEART_X_SIZE, ICON_HEART_Y_SIZE);
+
+    move_2d_array_screen_to_layer(animation_layer, screen, true);
+    flush_screen();
 }
 
 void exiting_loop() {
+    draw_particles(particles);
+    draw_layer(animation_layer);
 
+
+    float prev_anim_shift_dist = animation_shift_distance == 1 ? 0 : animation_shift_distance;
+
+    if (animation_shift_distance > 0) {
+        animation_shift_distance += ((float) GRID_X_SIZE - animation_shift_distance) / 10;
+    }
+
+    float anim_shift_speed = animation_shift_distance - prev_anim_shift_dist;
+    animation_shift_overflow += fmod(anim_shift_speed, 1);
+
+    if (animation_shift_overflow >= 1) {
+        anim_shift_speed += (int) animation_shift_overflow;
+        animation_shift_overflow = fmod(animation_shift_overflow, 1);
+    }
+
+
+    shift_layer_left_by(anim_shift_speed, animation_layer);
+
+
+    if (rand_range(0, 1) == 1) {
+        insert_new_particle(
+            (Vector2) { (float) GRID_X_SIZE - 1, rand_range(0, GRID_Y_SIZE - 1) },
+            (Vector2) { ((float) rand_range(-29, 0) / 10) - 1, 0 },
+            (Vector2) { 0, 0 },
+            (char[PARTICLE_STATES]) { '*', '*' },
+            0,
+            -1,
+            "fly-by",
+            particles
+        );
+    }
+
+    update_particles(particles, animation_shift_distance);
+
+
+    if (animation_shift_distance + 0.01 >= (float) GRID_X_SIZE) {
+        // BUG: this segfaults
+        // i mean... it closes the window so /shrug
+        CloseWindow();
+    }
 }
 
 //////////////////////////////////////////////////////////////////
 
 void ingame_init() {
-    run_game_init = false;
+    run_ingame_init = false;
     run_death_init = true;
 
     fg_scroll_overflow = bg_1_scroll_overflow = bg_2_scroll_overflow = 0;
@@ -256,7 +337,15 @@ void ingame_loop() {
     // yes this order is VERY intentional
     // see: update_player comments and OG code ('game_loop()')
     ingame_particles_loop();
+
+    // game_state change hidden in here
     update_player(&player, particles, total_distance, &game_state);
+
+
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        run_ingame_init = true;
+        game_state = Menu;
+    }
 }
 
 //////////////////////////////////////////////////////////////////
@@ -325,7 +414,7 @@ void ingame_stage_loop() {
 
 void death_init() {
     run_death_init = false;
-    run_game_init = true;
+    run_ingame_init = true;
 
     for (int i = 0; i < 20; i++) {
         insert_new_particle(
@@ -369,5 +458,8 @@ void death_loop() {
 
     if (IsKeyPressed(KEY_SPACE)) {
         game_state = Ingame;
+    } else if (IsKeyPressed(KEY_ESCAPE)) {
+        run_ingame_init = true;
+        game_state = Menu;
     }
 }
