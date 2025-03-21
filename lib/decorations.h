@@ -25,4 +25,4 @@ void insert_new_particle(Vector2 pos,
                          char* group,
                          Particle particles[MAX_PARTICLES]);
 
-void update_particles(Particle particles[MAX_PARTICLES]);
+void update_particles(Particle particles[MAX_PARTICLES], float anim_shift_speed);

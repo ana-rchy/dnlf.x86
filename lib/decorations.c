@@ -129,7 +129,7 @@ void insert_new_particle(Vector2 pos,
 
 //////////////////////////////////////////////////////////////////
 
-void update_particles(Particle particles[MAX_PARTICLES]) {
+void update_particles(Particle particles[MAX_PARTICLES], float anim_shift_distance) {
     for (int i = 0; i < MAX_PARTICLES; i++) {
         if (TextIsEqual(particles[i].group, "")) {
             continue;
@@ -140,7 +140,8 @@ void update_particles(Particle particles[MAX_PARTICLES]) {
 
         // TODO: og is 'part[i].x += part[i].dx + part[i].dx * (xlen-shifta)/20*(shifta>1);'
         // the 'shifta' part speeds up the particles on the main menu once play is pressed, together with the rest of the screen
-        particles[i].pos.x += particles[i].speed.x;
+        particles[i].pos.x += particles[i].speed.x
+            + ( (particles[i].speed.x * ((float) GRID_X_SIZE - anim_shift_distance)) / 20 ) * (anim_shift_distance > 1);
         particles[i].pos.y += particles[i].speed.y;
 
         if (particles[i].pos.x < 0 || particles[i].pos.x >= (float) GRID_X_SIZE ||

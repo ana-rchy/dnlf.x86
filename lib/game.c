@@ -30,6 +30,7 @@ float time_since_game_start = 0;
 float scroll_speed = 1;
 float total_distance = 0;
 
+// idk why it starts at 1 man the og just does that
 float animation_shift_distance = 1;
 
 Color bg_color = DNLF_WHITE;
@@ -118,9 +119,18 @@ void menu_loop() {
         );
     }
 
-    update_particles(particles);
+    update_particles(particles, 0);
 
-    if (IsKeyPressed(KEY_SPACE)) {
+
+
+    Rectangle play_arrow_rect = {
+        MENU_PLAY_ARROW_X_POS * UNIT_X_SIZE,
+        MENU_PLAY_ARROW_Y_POS * UNIT_Y_SIZE,
+        ICON_PLAY_ARROW_X_SIZE * UNIT_X_SIZE,
+        ICON_PLAY_ARROW_Y_SIZE * UNIT_Y_SIZE,
+    };
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), play_arrow_rect)) {
         game_state = Loading;
     }
 }
@@ -132,6 +142,7 @@ void menu_loop() {
 // a bit cursed but it works
 void loading_init() {
     run_loading_init = false;
+    animation_shift_distance = 1;
 
     draw_big_font("DO          NOT", MENU_DO_NOT_X_POS, MENU_DO_NOT_Y_POS, FULL_BLOCK);
     draw_big_font("LOSE          FOCUS", MENU_LOSE_FOCUS_X_POS, MENU_LOSE_FOCUS_Y_POS, FULL_BLOCK);
@@ -159,12 +170,7 @@ void loading_loop() {
         animation_shift_distance += ((float) GRID_X_SIZE - animation_shift_distance) / 10;
     }
 
-    if (animation_shift_distance + 0.01 >= (float) GRID_X_SIZE) {
-        animation_shift_distance = 0;
-    }
-
     float anim_shift_speed = animation_shift_distance - prev_anim_shift_dist;
-
     animation_shift_overflow += fmod(anim_shift_speed, 1);
 
     if (animation_shift_overflow >= 1) {
@@ -189,7 +195,13 @@ void loading_loop() {
         );
     }
 
-    update_particles(particles);
+    update_particles(particles, animation_shift_distance);
+
+
+    if (animation_shift_distance + 0.01 >= (float) GRID_X_SIZE) {
+        run_loading_init = true;
+        game_state = Ingame;
+    }
 }
 
 // same as loading_init()
@@ -259,7 +271,7 @@ void ingame_level_loop() {
 }
 
 void ingame_particles_loop() {
-    update_particles(particles);
+    update_particles(particles, 0);
 
     insert_new_particle(
         (Vector2) { PLAYER_X_POS, player.y },
@@ -353,7 +365,7 @@ void death_loop() {
 
     draw_big_font("GAME OVER", GAME_OVER_X_POS, GAME_OVER_Y_POS, DITHER_2);
 
-    update_particles(particles);
+    update_particles(particles, 0);
 
     if (IsKeyPressed(KEY_SPACE)) {
         game_state = Ingame;

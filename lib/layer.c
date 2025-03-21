@@ -1,6 +1,5 @@
 #include "layer.h"
 #include "defines.h"
-#include <stdio.h>
 
 void move_screen_to_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], char** screen, bool is_next_screen) {
     int start_x = is_next_screen ? GRID_X_SIZE : 0;
@@ -31,7 +30,6 @@ void move_2d_array_screen_to_layer(char layer[GRID_X_SIZE * 2][GRID_Y_SIZE], cha
 
 void shift_layer_left_by(int shift_amount, char layer[GRID_X_SIZE * 2][GRID_Y_SIZE]) {
     if (shift_amount < 1) {
-        printf("shift_layer_left_by: shift_amount is < 1 (%d)\n", shift_amount);
         return;
     }
 
