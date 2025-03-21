@@ -8,7 +8,9 @@ typedef enum GameState {
     Dead,
 } GameState;
 
+void game_init();
 void game_loop();
+void game_exit();
 
 void menu_init();
 void menu_loop();

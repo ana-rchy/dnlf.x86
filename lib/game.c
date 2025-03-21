@@ -9,6 +9,7 @@
 #include "stage.h"
 #include <math.h>
 #include <raylib.h>
+#include <stdio.h>
 
 
 GameState game_state = Menu;
@@ -39,7 +40,17 @@ Color fg_color = DNLF_BLACK;
 Particle particles[MAX_PARTICLES];
 Player player = {};
 
+Music menu_music;
+Music ingame_music;
+Sound death_sfx;
+
 //////////////////////////////////////////////////////////////////
+
+void game_init() {
+    menu_music = LoadMusicStream("assets/menumusic.wav");
+    ingame_music = LoadMusicStream("assets/losingfocusv1.wav");
+    death_sfx = LoadSound("assets/death.wav");
+}
 
 void game_loop() {
     ClearBackground(bg_color);
@@ -89,6 +100,14 @@ void game_loop() {
     draw_and_flush_screen(fg_color, bg_color);
 }
 
+void game_exit() {
+    UnloadMusicStream(menu_music);
+    UnloadMusicStream(ingame_music);
+    CloseAudioDevice();
+    CloseWindow();
+    exit(0);
+}
+
 //////////////////////////////////////////////////////////////////
 
 // BUG: we dont reset the color here because in the og it doesnt either :^)
@@ -96,6 +115,12 @@ void menu_init() {
     run_menu_init = false;
 
     clear_particles(particles);
+
+    StopMusicStream(ingame_music);
+    StopMusicStream(menu_music);
+    StopSound(death_sfx);
+
+    PlayMusicStream(menu_music);
 }
 
 void menu_loop() {
@@ -121,6 +146,8 @@ void menu_loop() {
     }
 
     update_particles(particles, 0);
+
+    UpdateMusicStream(menu_music);
 
 
 
@@ -198,7 +225,6 @@ void loading_loop() {
         animation_shift_overflow = fmod(animation_shift_overflow, 1);
     }
 
-
     shift_layer_left_by(anim_shift_speed, animation_layer);
 
 
@@ -216,6 +242,9 @@ void loading_loop() {
     }
 
     update_particles(particles, animation_shift_distance);
+
+    
+    UpdateMusicStream(menu_music);
 
 
     if (animation_shift_distance + 0.01 >= (float) GRID_X_SIZE) {
@@ -267,7 +296,6 @@ void exiting_loop() {
         animation_shift_overflow = fmod(animation_shift_overflow, 1);
     }
 
-
     shift_layer_left_by(anim_shift_speed, animation_layer);
 
 
@@ -287,9 +315,11 @@ void exiting_loop() {
     update_particles(particles, animation_shift_distance);
 
 
+    UpdateMusicStream(menu_music);
+
+
     if (animation_shift_distance + 0.01 >= (float) GRID_X_SIZE) {
-        CloseWindow();
-        exit(0);
+        game_exit();
     }
 }
 
@@ -317,6 +347,12 @@ void ingame_init() {
     reset_player(&player);
 
     clear_particles(particles);
+
+    StopMusicStream(ingame_music);
+    StopMusicStream(menu_music);
+    StopSound(death_sfx);
+
+    PlayMusicStream(ingame_music);
 }
 
 void ingame_loop() {
@@ -339,6 +375,8 @@ void ingame_loop() {
 
     // game_state change hidden in here
     update_player(&player, particles, total_distance, &game_state);
+
+    UpdateMusicStream(ingame_music);
 
 
     if (IsKeyPressed(KEY_ESCAPE)) {
@@ -439,6 +477,8 @@ void death_init() {
             };
         }
     }
+
+    PlaySound(death_sfx);
 }
 
 void death_loop() {

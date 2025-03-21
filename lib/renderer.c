@@ -9,7 +9,7 @@ char screen[GRID_X_SIZE][GRID_Y_SIZE];
 Font font;
 
 void setup_terminal_font() {
-    font = LoadFont("font.png");
+    font = LoadFont("assets/font.png");
 }
 
 void draw_char(char c, int x, int y) {
