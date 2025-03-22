@@ -140,6 +140,9 @@
 
 #define SCROLL_SPEED_ACCELERATION 0.0001
 
+//// cheats ////
+#define NOCLIP 1
+
 
 
 //// macros ////

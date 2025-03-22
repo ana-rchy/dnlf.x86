@@ -158,7 +158,7 @@ void draw_score(int score) {
 
 void draw_invul_frames(int iframes, int iframes_max) {
     if (iframes < 0) {
-        printf("draw_invul_frames: iframes less than 0");
+        printf("draw_invul_frames: iframes less than 0\n");
         return;
     }
    

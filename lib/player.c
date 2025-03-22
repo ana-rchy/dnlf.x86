@@ -25,7 +25,7 @@ void reset_player(Player* player) {
 bool update_player(Player* player, Particle particles[MAX_PARTICLES], float total_distance) {
     char in_front = screen[PLAYER_X_POS + 1][(int) player->y];
 
-    if (in_front >= FULL_BLOCK && in_front <= RIGHT_HALF) {
+    if (in_front >= FULL_BLOCK && in_front <= RIGHT_HALF && !NOCLIP) {
         if (player->invul_frames == 0) {
             return true;
         } else {

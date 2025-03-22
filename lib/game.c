@@ -411,7 +411,7 @@ void ingame_loop() {
         game_state = Menu;
     }
 
-    if (time_since_game_start >= STAGE_TIME * MAX_STAGE) {
+    if (time_since_game_start >= STAGE_TIME * (MAX_STAGE + 1)) {
         game_state = Won;
     }
 }
@@ -423,7 +423,7 @@ void won_init() {
 void won_loop() {
     time_since_game_start += GetFrameTime();
 
-    if (GetMusicTimePlayed(current_audio) >= GetMusicTimeLength(current_audio)) {
+    if (time_since_game_start >= GetMusicTimeLength(current_audio)) {
         game_exit();
     }
 }

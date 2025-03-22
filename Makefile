@@ -5,19 +5,19 @@ WCC=x86_64-w64-mingw32-gcc
 BUILD_FLAGS=-l raylib -l m -l GL -l pthread -l dl -l rt -l X11 -Wall
 
 run: main
-	./output/main
+	./output/DNLF.x86
 
 run-debug: debug
-	gdb ./output/main
+	gdb ./output/DNLF.x86
 
 
 main: main.c
 	mkdir -p output
-	$(CC) main.c lib/*.c $(BUILD_FLAGS) -o output/main
+	$(CC) main.c lib/*.c $(BUILD_FLAGS) -o output/DNLF.x86
 
 debug: main.c
 	mkdir -p output
-	$(CC) main.c lib/*.c $(BUILD_FLAGS) -g -fsanitize=undefined -o output/main
+	$(CC) main.c lib/*.c $(BUILD_FLAGS) -g -fsanitize=undefined -o output/DNLF.x86
 
 
 raylib: lib/raylib/src/libraylib.a
@@ -27,11 +27,11 @@ raylib: lib/raylib/src/libraylib.a
 
 windows: main.c raylib
 	mkdir -p output
-	$(WCC) main.c lib/*.c -I 'lib/raylib/src/' 'lib/raylib/src/libraylib.a' -l m -l gdi32 -l winmm -g -o output/main.exe
+	$(WCC) main.c lib/*.c -I 'lib/raylib/src/' 'lib/raylib/src/libraylib.a' -l m -l gdi32 -l winmm -g -o output/DNLF.x86.exe
 
 
 clean:
-	rm -f output/main
-	rm -f output/main.exe
+	rm -f output/DNLF.x86
+	rm -f output/DNLF.x86.exe
 
 .PHONY: run run-debug clean
