@@ -6,6 +6,7 @@ typedef enum GameState {
     Exiting,
     Ingame,
     Dead,
+    Won,
 } GameState;
 
 void game_init();
@@ -22,6 +23,8 @@ void exiting_loop();
 
 void ingame_init();
 void ingame_loop();
+void won_init();
+void won_loop();
 
 void ingame_level_loop();
 void ingame_particles_loop();

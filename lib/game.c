@@ -9,7 +9,6 @@
 #include "stage.h"
 #include <math.h>
 #include <raylib.h>
-#include <stdio.h>
 
 
 GameState game_state = Menu;
@@ -18,6 +17,7 @@ bool run_ingame_init = true;
 bool run_death_init = true;
 bool run_loading_init = true;
 bool run_exiting_init = true;
+bool run_won_init = true;
 
 char foreground[GRID_X_SIZE * 2][GRID_Y_SIZE],
      background_1[GRID_X_SIZE * 2][GRID_Y_SIZE],
@@ -40,16 +40,21 @@ Color fg_color = DNLF_BLACK;
 Particle particles[MAX_PARTICLES];
 Player player = {};
 
+Music current_audio;
 Music menu_music;
 Music ingame_music;
-Sound death_sfx;
+Music death_sfx;
 
-//////////////////////////////////////////////////////////////////
+
+//=================================================================================================================//
+
 
 void game_init() {
     menu_music = LoadMusicStream("assets/menumusic.wav");
     ingame_music = LoadMusicStream("assets/losingfocusv1.wav");
-    death_sfx = LoadSound("assets/death.wav");
+    death_sfx = LoadMusicStream("assets/death.wav");
+    
+    death_sfx.looping = false;
 }
 
 void game_loop() {
@@ -95,9 +100,21 @@ void game_loop() {
 
             death_loop();
             break;
+
+        case Won:
+            if (run_won_init) {
+                won_init();
+            }
+
+            won_loop();
+            break;
     }
 
-    draw_and_flush_screen(fg_color, bg_color);
+    UpdateMusicStream(current_audio);
+
+    if (!IsWindowState(FLAG_WINDOW_HIDDEN)) {
+        draw_and_flush_screen(fg_color, bg_color);
+    }
 }
 
 void game_exit() {
@@ -108,19 +125,22 @@ void game_exit() {
     exit(0);
 }
 
-//////////////////////////////////////////////////////////////////
+
+//=================================================================================================================//
+
 
 // BUG: we dont reset the color here because in the og it doesnt either :^)
 void menu_init() {
     run_menu_init = false;
+    run_loading_init = true;
+    run_exiting_init = true;
 
     clear_particles(particles);
 
-    StopMusicStream(ingame_music);
-    StopMusicStream(menu_music);
-    StopSound(death_sfx);
-
-    PlayMusicStream(menu_music);
+    // audio
+    StopMusicStream(current_audio);
+    current_audio = menu_music;
+    PlayMusicStream(current_audio);
 }
 
 void menu_loop() {
@@ -132,6 +152,7 @@ void menu_loop() {
     draw_icon((int*) ICON_PLAY_ARROW, MENU_PLAY_ARROW_X_POS, MENU_PLAY_ARROW_Y_POS, ICON_PLAY_ARROW_X_SIZE, ICON_PLAY_ARROW_Y_SIZE);
     draw_icon((int*) ICON_EXIT_DOOR, MENU_EXIT_DOOR_X_POS, MENU_EXIT_DOOR_Y_POS, ICON_EXIT_DOOR_X_SIZE, ICON_EXIT_DOOR_Y_SIZE);
 
+    // particles
     if (rand_range(0, 1) == 1) {
         insert_new_particle(
             (Vector2) { (float) GRID_X_SIZE - 1, rand_range(0, GRID_Y_SIZE - 1) },
@@ -147,23 +168,14 @@ void menu_loop() {
 
     update_particles(particles, 0);
 
-    UpdateMusicStream(menu_music);
 
-
-
+    // screen buttons / state transitions
     Rectangle play_arrow_rect = {
         MENU_PLAY_ARROW_X_POS * UNIT_X_SIZE,
         MENU_PLAY_ARROW_Y_POS * UNIT_Y_SIZE,
         ICON_PLAY_ARROW_X_SIZE * UNIT_X_SIZE,
         ICON_PLAY_ARROW_Y_SIZE * UNIT_Y_SIZE,
     };
-
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), play_arrow_rect)) {
-        run_menu_init = true;
-        run_loading_init = true;
-        game_state = Loading;
-    }
-
 
     Rectangle exit_door_rect = {
         MENU_EXIT_DOOR_X_POS * UNIT_X_SIZE,
@@ -172,24 +184,31 @@ void menu_loop() {
         ICON_EXIT_DOOR_Y_SIZE * UNIT_Y_SIZE,
     };
 
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), play_arrow_rect)) {
+        game_state = Loading;
+    }
+
     if ((IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), exit_door_rect)) ||
         IsKeyPressed(KEY_ESCAPE))
     {
-        run_exiting_init = true;
         game_state = Exiting;
     }
 }
 
-//////////////////////////////////////////////////////////////////
+
+//=================================================================================================================//
+
 
 // yoink the main `screen` with no particles and just text/icons, onto the anim layer
 // then do it again for the loading text, onto the future part of the anim layer
 // a bit cursed but it works
 void loading_init() {
     run_loading_init = false;
+    run_ingame_init = true;
     animation_shift_distance = 1;
 
 
+    // current screen to layer
     draw_big_font("DO          NOT", MENU_DO_NOT_X_POS, MENU_DO_NOT_Y_POS, FULL_BLOCK);
     draw_big_font("LOSE          FOCUS", MENU_LOSE_FOCUS_X_POS, MENU_LOSE_FOCUS_Y_POS, FULL_BLOCK);
     draw_icon((int*) ICON_PLAY_ARROW, MENU_PLAY_ARROW_X_POS, MENU_PLAY_ARROW_Y_POS, ICON_PLAY_ARROW_X_SIZE, ICON_PLAY_ARROW_Y_SIZE);
@@ -199,6 +218,7 @@ void loading_init() {
     flush_screen();
 
 
+    // future screen to layer
     draw_big_font("LOADING", LOADING_X_POS, LOADING_Y_POS, FULL_BLOCK);
     draw_icon((int*) ICON_HOURGLASS, LOADING_HOURGLASS_X_POS, LOADING_HOURGLASS_Y_POS, ICON_HOURGLASS_X_SIZE, ICON_HOURGLASS_Y_SIZE);
 
@@ -211,6 +231,7 @@ void loading_loop() {
     draw_layer(animation_layer);
 
 
+    // animation layer shifting
     float prev_anim_shift_dist = animation_shift_distance == 1 ? 0 : animation_shift_distance;
 
     if (animation_shift_distance > 0) {
@@ -228,6 +249,7 @@ void loading_loop() {
     shift_layer_left_by(anim_shift_speed, animation_layer);
 
 
+    // particles
     if (rand_range(0, 1) == 1) {
         insert_new_particle(
             (Vector2) { (float) GRID_X_SIZE - 1, rand_range(0, GRID_Y_SIZE - 1) },
@@ -244,21 +266,19 @@ void loading_loop() {
     update_particles(particles, animation_shift_distance);
 
     
-    UpdateMusicStream(menu_music);
-
-
+    // state transitions
     if (animation_shift_distance + 0.01 >= (float) GRID_X_SIZE) {
-        run_loading_init = true;
         game_state = Ingame;
     }
 }
 
-// same as loading_init()
+// essentially the same as loading_init()
 void exiting_init() {
     run_exiting_init = false;
     animation_shift_distance = 1;
 
 
+    // current screen to layer
     draw_big_font("DO          NOT", MENU_DO_NOT_X_POS, MENU_DO_NOT_Y_POS, FULL_BLOCK);
     draw_big_font("LOSE          FOCUS", MENU_LOSE_FOCUS_X_POS, MENU_LOSE_FOCUS_Y_POS, FULL_BLOCK);
     draw_icon((int*) ICON_PLAY_ARROW, MENU_PLAY_ARROW_X_POS, MENU_PLAY_ARROW_Y_POS, ICON_PLAY_ARROW_X_SIZE, ICON_PLAY_ARROW_Y_SIZE);
@@ -268,6 +288,7 @@ void exiting_init() {
     flush_screen();
 
 
+    // future screen to layer
     draw_big_font("THANKS          FOR", EXITING_THANKS_FOR_X_POS, EXITING_THANKS_FOR_Y_POS, FULL_BLOCK);
     draw_big_font("PLAYING", EXITING_PLAYING_X_POS, EXITING_PLAYING_Y_POS, FULL_BLOCK);
     draw_icon((int*) ICON_EXCLAMATION, EXITING_EXCLAMATION_X_POS, EXITING_EXCLAMATION_Y_POS, ICON_EXCLAMATION_X_SIZE, ICON_EXCLAMATION_Y_SIZE);
@@ -282,6 +303,7 @@ void exiting_loop() {
     draw_layer(animation_layer);
 
 
+    // animation layer shifting
     float prev_anim_shift_dist = animation_shift_distance == 1 ? 0 : animation_shift_distance;
 
     if (animation_shift_distance > 0) {
@@ -299,6 +321,7 @@ void exiting_loop() {
     shift_layer_left_by(anim_shift_speed, animation_layer);
 
 
+    // particles
     if (rand_range(0, 1) == 1) {
         insert_new_particle(
             (Vector2) { (float) GRID_X_SIZE - 1, rand_range(0, GRID_Y_SIZE - 1) },
@@ -315,19 +338,21 @@ void exiting_loop() {
     update_particles(particles, animation_shift_distance);
 
 
-    UpdateMusicStream(menu_music);
-
-
+    // state transitions
     if (animation_shift_distance + 0.01 >= (float) GRID_X_SIZE) {
         game_exit();
     }
 }
 
-//////////////////////////////////////////////////////////////////
+
+//=================================================================================================================//
+
 
 void ingame_init() {
+    // various game variables being reset
     run_ingame_init = false;
     run_death_init = true;
+    run_menu_init = true;
 
     fg_scroll_overflow = bg_1_scroll_overflow = bg_2_scroll_overflow = 0;
 
@@ -340,6 +365,8 @@ void ingame_init() {
     bg_color = DNLF_WHITE;
     fg_color = DNLF_BLACK;
 
+
+    // and various resetting functions
     setup_foreground(foreground);
     setup_layer(background_1, DITHER_1);
     setup_layer(background_2, DITHER_3);
@@ -348,14 +375,15 @@ void ingame_init() {
 
     clear_particles(particles);
 
-    StopMusicStream(ingame_music);
-    StopMusicStream(menu_music);
-    StopSound(death_sfx);
-
-    PlayMusicStream(ingame_music);
+    // audio
+    StopMusicStream(current_audio);
+    current_audio = ingame_music;
+    PlayMusicStream(current_audio);
 }
 
 void ingame_loop() {
+    time_since_game_start += GetFrameTime();
+
     draw_layer(background_2);
     draw_layer(background_1);
     draw_layer(foreground);
@@ -366,26 +394,43 @@ void ingame_loop() {
     draw_invul_frames(player.invul_frames, player.invul_frames_max);
     draw_score(player.score);
 
-    ingame_level_loop();
-    ingame_stage_loop();
 
     // yes this order is VERY intentional
     // see: update_player comments and OG code ('game_loop()')
+    ingame_level_loop();
+    ingame_stage_loop();
     ingame_particles_loop();
 
-    // game_state change hidden in here
-    update_player(&player, particles, total_distance, &game_state);
 
-    UpdateMusicStream(ingame_music);
-
+    // state transitions
+    if (update_player(&player, particles, total_distance)) {
+        game_state = Dead;
+    }
 
     if (IsKeyPressed(KEY_ESCAPE)) {
-        run_ingame_init = true;
         game_state = Menu;
+    }
+
+    if (time_since_game_start >= STAGE_TIME * MAX_STAGE) {
+        game_state = Won;
     }
 }
 
-//////////////////////////////////////////////////////////////////
+void won_init() {
+    SetWindowState(FLAG_WINDOW_HIDDEN);
+}
+
+void won_loop() {
+    time_since_game_start += GetFrameTime();
+
+    if (GetMusicTimePlayed(current_audio) >= GetMusicTimeLength(current_audio)) {
+        game_exit();
+    }
+}
+
+
+//=================================================================================================================//
+
 
 void ingame_level_loop() {
     total_distance += scroll_speed;
@@ -425,7 +470,6 @@ void ingame_particles_loop() {
 }
 
 void ingame_stage_loop() {
-    time_since_game_start += GetFrameTime();
     stage = min(time_since_game_start / STAGE_TIME, MAX_STAGE);
 
     set_stage_colors(stage, &fg_color, &bg_color);
@@ -447,12 +491,16 @@ void ingame_stage_loop() {
     }
 }
 
-//////////////////////////////////////////////////////////////////
+
+//=================================================================================================================//
+
 
 void death_init() {
     run_death_init = false;
     run_ingame_init = true;
+    run_menu_init = true;
 
+    // particles
     for (int i = 0; i < 20; i++) {
         insert_new_particle(
             (Vector2) { PLAYER_X_POS, player.y },
@@ -478,7 +526,10 @@ void death_init() {
         }
     }
 
-    PlaySound(death_sfx);
+    // audio
+    StopMusicStream(current_audio);
+    current_audio = death_sfx;
+    PlayMusicStream(current_audio);
 }
 
 void death_loop() {
@@ -493,12 +544,14 @@ void death_loop() {
 
     draw_big_font("GAME OVER", GAME_OVER_X_POS, GAME_OVER_Y_POS, DITHER_2);
 
+
     update_particles(particles, 0);
 
+
+    // state transitions
     if (IsKeyPressed(KEY_SPACE)) {
         game_state = Ingame;
     } else if (IsKeyPressed(KEY_ESCAPE)) {
-        run_ingame_init = true;
         game_state = Menu;
     }
 }

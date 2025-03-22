@@ -22,12 +22,12 @@ void reset_player(Player* player) {
 // sometimes it doesnt see #/@ and then you move up/down a little while in a wall
 // ...also, particles can affect physics.
 // Too bad!
-void update_player(Player* player, Particle particles[MAX_PARTICLES], float total_distance, GameState* game_state) {
+bool update_player(Player* player, Particle particles[MAX_PARTICLES], float total_distance) {
     char in_front = screen[PLAYER_X_POS + 1][(int) player->y];
 
     if (in_front >= FULL_BLOCK && in_front <= RIGHT_HALF) {
         if (player->invul_frames == 0) {
-            *game_state = Dead;
+            return true;
         } else {
             player->invul_frames--;
 
@@ -103,4 +103,6 @@ void update_player(Player* player, Particle particles[MAX_PARTICLES], float tota
         player->y += push_direction;
         player->y_speed = 0;
     }
+
+    return false;
 }
