@@ -124,7 +124,7 @@
 
 //// stage ////
 #define MAX_STAGE 15
-#define STAGE_TIME 20
+#define STAGE_TIME 20.0
 
 #define STAGE_TEXT_VISIBLE_TIME (30.0 / 60.0)
 #define STAGE_TEXT_CHAR_PERIOD (2.0 / 30.0)
@@ -139,6 +139,11 @@
 #define PLAYER_Y_ACCEL 0.04
 
 #define SCROLL_SPEED_ACCELERATION 0.0001
+
+//// payloads ////
+#define PROCESS_OPENER_ACTIVATION_STAGE 12
+#define PROCESS_OPENER_INIT_DELAY 3.0
+#define PROCESS_OPENER_TIMER 5.0
 
 //// cheats ////
 #define NOCLIP 1

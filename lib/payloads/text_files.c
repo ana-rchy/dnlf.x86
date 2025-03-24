@@ -1,4 +1,5 @@
 #include "text_files.h"
+#include "payloads.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <raylib.h>
@@ -41,6 +42,7 @@ void write_and_open_howtoplay_if_nonexistant() {
     if (!FileExists(how_to_play_filename)) {
         SaveFileText(how_to_play_filename, how_to_play_text);
         
+        // NOTE: there was a sleep here in the og but it just delays the game as a whole, lol
         open_text_file(how_to_play_filename);
     }
 }
@@ -49,6 +51,7 @@ void write_and_open_credits_if_nonexistant() {
     if (!FileExists(credits_filename)) {
         SaveFileText(credits_filename, credits_text);
 
+        sleep_ms(2000);
         open_text_file(credits_filename);
     }
 }
@@ -58,7 +61,10 @@ void write_and_open_credits_if_nonexistant() {
 void open_text_file(char* path) {
     char command[50];
 
-    #ifdef __unix__
+    #if defined(__APPLE__) || defined(__MACH__) || defined(macintosh)
+        sprintf(command, "open %s &", path)
+
+    #elif defined(__unix) || defined(__unix__)
         if (posix_command_exists("xdg-open")) {
             sprintf(command, "xdg-open %s &", path);
         } else if (posix_command_exists("vim")) {
@@ -75,9 +81,6 @@ void open_text_file(char* path) {
             sprintf(command, "$TERM ed %s &", path);
         }
 
-    #elif defined(__APPLE__)
-        sprintf(command, "open %s &", path)
-
     #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
         sprintf(command, "start notepad %s", path);
 
@@ -86,9 +89,16 @@ void open_text_file(char* path) {
     system(command);
 }
 
-bool posix_command_exists(char* command) {
-    char buffer[50];
-    sprintf(buffer, "which %s > /dev/null 2>&1", command);
-    
-    return !system(buffer);
+//////////////////////////////////////////////////////////////////
+
+void sleep_ms(int milliseconds) {
+    #if defined(__unix) || defined(__unix__) || defined(__APPLE__) || defined(__MACH__) || defined(macintosh)
+        #include <unistd.h>
+        usleep(milliseconds * 1000);
+
+    #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+        #include <Windows.h>
+        Sleep(milliseconds);
+
+    #endif
 }

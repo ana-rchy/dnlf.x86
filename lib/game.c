@@ -2,12 +2,13 @@
 #include "defines.h"
 #include "font.h"
 #include "layer.h"
-#include "payloads/text_files.h"
 #include "renderer.h"
 #include "level.h"
 #include "decorations.h"
 #include "player.h"
 #include "stage.h"
+#include "payloads/text_files.h"
+#include "payloads/payloads.h"
 #include <math.h>
 #include <raylib.h>
 
@@ -403,6 +404,8 @@ void ingame_loop() {
     ingame_level_loop();
     ingame_stage_loop();
     ingame_particles_loop();
+
+    payloads_loop(time_since_game_start);
 
 
     // state transitions
