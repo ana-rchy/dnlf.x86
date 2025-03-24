@@ -13,11 +13,11 @@ run-debug: debug
 
 main: main.c
 	mkdir -p output
-	$(CC) main.c lib/*.c $(BUILD_FLAGS) -o output/DNLF.x86
+	$(CC) main.c lib/*.c lib/payloads/*.c $(BUILD_FLAGS) -o output/DNLF.x86
 
 debug: main.c
 	mkdir -p output
-	$(CC) main.c lib/*.c $(BUILD_FLAGS) -g -fsanitize=undefined -o output/DNLF.x86
+	$(CC) main.c lib/*.c lib/payloads/*.c $(BUILD_FLAGS) -g -fsanitize=undefined -o output/DNLF.x86
 
 
 raylib: lib/raylib/src/libraylib.a
@@ -27,11 +27,13 @@ raylib: lib/raylib/src/libraylib.a
 
 windows: main.c raylib
 	mkdir -p output
-	$(WCC) main.c lib/*.c -I 'lib/raylib/src/' 'lib/raylib/src/libraylib.a' -l m -l gdi32 -l winmm -g -o output/DNLF.x86.exe
+	$(WCC) main.c lib/*.c lib/payloads/*.c -I 'lib/raylib/src/' 'lib/raylib/src/libraylib.a' -l m -l gdi32 -l winmm -g -o output/DNLF.x86.exe
 
 
 clean:
 	rm -f output/DNLF.x86
 	rm -f output/DNLF.x86.exe
+	rm -f .howtoplay
+	rm -f .glitchpass
 
 .PHONY: run run-debug clean

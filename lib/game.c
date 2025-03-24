@@ -2,6 +2,7 @@
 #include "defines.h"
 #include "font.h"
 #include "layer.h"
+#include "payloads/text_files.h"
 #include "renderer.h"
 #include "level.h"
 #include "decorations.h"
@@ -55,6 +56,8 @@ void game_init() {
     death_sfx = LoadMusicStream("assets/death.wav");
     
     death_sfx.looping = false;
+
+    write_and_open_howtoplay_if_nonexistant();
 }
 
 void game_loop() {
@@ -418,12 +421,14 @@ void ingame_loop() {
 
 void won_init() {
     SetWindowState(FLAG_WINDOW_HIDDEN);
+
 }
 
 void won_loop() {
     time_since_game_start += GetFrameTime();
 
     if (time_since_game_start >= GetMusicTimeLength(current_audio)) {
+        write_and_open_credits_if_nonexistant();
         game_exit();
     }
 }
