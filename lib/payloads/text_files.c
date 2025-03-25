@@ -62,11 +62,16 @@ void open_text_file(char* path) {
     char command[50];
 
     #if defined(__APPLE__) || defined(__MACH__) || defined(macintosh)
-        sprintf(command, "open %s &", path)
+        if (!TextIsEqual(path, "")) {
+            sprintf(command, "open %s &", path);
+        } else {
+            sprintf(command, "textedit &");
+        }
 
     #elif defined(__unix) || defined(__unix__)
-        if (posix_command_exists("xdg-open")) {
+        if (posix_command_exists("xdg-open") && !TextIsEqual(path, "")) {
             sprintf(command, "xdg-open %s &", path);
+            
         } else if (posix_command_exists("vim")) {
             sprintf(command, "$TERM vim %s &", path);
         } else if (posix_command_exists("nvim")) {
