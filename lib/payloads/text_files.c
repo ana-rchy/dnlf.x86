@@ -1,8 +1,11 @@
 #include "text_files.h"
-#include "payloads.h"
+#include "terminal.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <raylib.h>
+
+char* unix_text_editors[] = { "vim", "nvim", "emacs", "nano", "vi", "ed", NULL };
+
 
 char* how_to_play_filename = ".howtoplay";
 
@@ -59,39 +62,26 @@ void write_and_open_credits_if_nonexistant() {
 //////////////////////////////////////////////////////////////////
 
 void open_text_file(char* path) {
-    char command[50];
-
     #if defined(__APPLE__) || defined(__MACH__) || defined(macintosh)
         if (!TextIsEqual(path, "")) {
-            sprintf(command, "open %s &", path);
+            run_command("open", (char*[]) { path, "&", NULL });
         } else {
-            sprintf(command, "textedit &");
+            system("textedit &");
         }
 
     #elif defined(__unix) || defined(__unix__)
         if (posix_command_exists("xdg-open") && !TextIsEqual(path, "")) {
-            sprintf(command, "xdg-open %s &", path);
-            
-        } else if (posix_command_exists("vim")) {
-            sprintf(command, "$TERM vim %s &", path);
-        } else if (posix_command_exists("nvim")) {
-            sprintf(command, "$TERM nvim %s &", path);
-        } else if (posix_command_exists("emacs")) {
-            sprintf(command, "$TERM emacs %s &", path);
-        } else if (posix_command_exists("nano")) {
-            sprintf(command, "$TERM nano %s &", path);
-        } else if (posix_command_exists("vi")) {
-            sprintf(command, "$TERM vi %s &", path);
-        } else if (posix_command_exists("ed")) {
-            sprintf(command, "$TERM ed %s &", path);
+            run_command("xdg-open", (char*[]) { path, "&", NULL });
+        } else {
+            int i = get_first_valid_command_index(unix_text_editors);
+
+            open_posix_terminal((char*[]) { unix_text_editors[i], path, "&", NULL });
         }
 
     #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-        sprintf(command, "start notepad %s", path);
+        run_command("start notepad", (char*[]) { path, NULL });
 
     #endif
-    
-    system(command);
 }
 
 //////////////////////////////////////////////////////////////////

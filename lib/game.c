@@ -13,7 +13,7 @@
 #include <raylib.h>
 
 
-GameState game_state = Ingame;
+GameState game_state = Menu;
 bool run_menu_init = true;
 bool run_ingame_init = true;
 bool run_death_init = true;
