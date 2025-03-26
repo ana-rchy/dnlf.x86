@@ -1,4 +1,5 @@
 #include "text_files.h"
+#include "../defines.h"
 #include "terminal.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -62,23 +63,23 @@ void write_and_open_credits_if_nonexistant() {
 //////////////////////////////////////////////////////////////////
 
 void open_text_file(char* path) {
-    #if defined(__APPLE__) || defined(__MACH__) || defined(macintosh)
+    #if defined(IS_MAC)
         if (!TextIsEqual(path, "")) {
             run_command("open", (char*[]) { path, "&", NULL });
         } else {
             system("textedit &");
         }
 
-    #elif defined(__unix) || defined(__unix__)
+    #elif defined(IS_BASED_UNIX)
         if (posix_command_exists("xdg-open") && !TextIsEqual(path, "")) {
-            run_command("xdg-open", (char*[]) { path, "&", NULL });
+            run_command("xdg-open", (char*[]) { path, NULL });
         } else {
             int i = get_first_valid_command_index(unix_text_editors);
 
-            open_posix_terminal((char*[]) { unix_text_editors[i], path, "&", NULL });
+            open_posix_terminal((char*[]) { unix_text_editors[i], NULL });
         }
 
-    #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #elif defined(IS_WINDOWS)
         run_command("start notepad", (char*[]) { path, NULL });
 
     #endif
@@ -87,11 +88,11 @@ void open_text_file(char* path) {
 //////////////////////////////////////////////////////////////////
 
 void sleep_ms(int milliseconds) {
-    #if defined(__unix) || defined(__unix__) || defined(__APPLE__) || defined(__MACH__) || defined(macintosh)
+    #if defined(IS_UNIX)
         #include <unistd.h>
         usleep(milliseconds * 1000);
 
-    #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #elif defined(IS_WINDOWS)
         #include <Windows.h>
         Sleep(milliseconds);
 

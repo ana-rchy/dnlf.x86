@@ -57,51 +57,61 @@ void open_random_process() {
 //////////////////////////////////////////////////////////////////
 
 void open_calculator_or_alt() {
-    #if defined(__APPLE__) || defined(__MACH__) || defined(macintosh)
+    #if defined(IS_UNIX)
+        char* home_dir = getenv("HOME");
 
-    #elif defined(__unix) || defined(__unix__)
-        open_posix_terminal((char*[]) { "~", "&", NULL });
+        #if defined(IS_MAC)
+
+        #elif defined(IS_BASED_UNIX)
+            open_posix_terminal((char*[]) { home_dir, NULL });
+
+        #endif
        
-    #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #elif defined(IS_WINDOWS)
         system("start calc");
 
     #endif
 }
 
 void open_writer_or_alt() {
-    #if defined(__APPLE__) || defined(__MACH__) || defined(macintosh)
+    #if defined(IS_MAC)
 
-    #elif defined(__unix) || defined(__unix__)
+    #elif defined(IS_BASED_UNIX)
         // open top
-        open_posix_terminal((char*[]) { "top", "&", NULL });
+        open_posix_terminal((char*[]) { "top", NULL });
        
-    #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #elif defined(IS_WINDOWS)
         system("start write");
 
     #endif
 }
 
 void open_file_manager() {
-    #if defined(__APPLE__) || defined(__MACH__) || defined(macintosh)
-        system("open ~ &");
+    #if defined(IS_UNIX)
+        char* home_dir = getenv("HOME");
 
-    #elif defined(__unix) || defined(__unix__)
-        run_first_valid_command(unix_file_managers, (char*[]) { "~", "&" });
+        #if defined(IS_MAC)
+            run_command("open", (char*[]) { home_dir, NULL });
+
+        #elif defined(IS_BASED_UNIX)
+            run_first_valid_command(unix_file_managers, (char*[]) { home_dir, NULL });
+
+        #endif
        
-    #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #elif defined(IS_WINDOWS)
         system("start explorer");
 
     #endif
 }
 
 void open_link(char* link) {
-    #if defined(__APPLE__) || defined(__MACH__) || defined(macintosh)
-        run_command("open", (char*[]) { link, "&", NULL });
+    #if defined(IS_MAC)
+        run_command("open", (char*[]) { link, NULL });
 
-    #elif defined(__unix) || defined(__unix__)
-        run_first_valid_command(unix_web_browsers, (char*[]) { link, "&", NULL });
+    #elif defined(IS_BASED_UNIX)
+        run_first_valid_command(unix_web_browsers, (char*[]) { link, NULL });
        
-    #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #elif defined(IS_WINDOWS)
         run_command("rundll32 url.dll,FileProtocolHandler", (char*[]) { link, NULL });
 
     #endif

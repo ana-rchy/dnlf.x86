@@ -1,6 +1,23 @@
 #pragma once
 #include <stdlib.h>
 
+//// dev ////
+#if defined(__unix) || defined(__unix__)
+    #define IS_BASED_UNIX
+#endif
+
+#if defined(__APPLE__) || defined(__MACH__) || defined(macintosh)
+    #define IS_MAC
+#endif
+
+#if defined(IS_BASED_UNIX) || defined(IS_MAC)
+    #define IS_UNIX
+#endif
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #define IS_WINDOWS
+#endif
+
 //// window ////
 #define FRAME_RATE 60
 #define SCREEN_X_SIZE 1024
@@ -141,7 +158,7 @@
 #define SCROLL_SPEED_ACCELERATION 0.0001
 
 //// payloads ////
-#define PROCESS_OPENER_ACTIVATION_STAGE 0
+#define PROCESS_OPENER_ACTIVATION_STAGE 12
 #define PROCESS_OPENER_INIT_DELAY 3.0
 #define PROCESS_OPENER_TIMER 5.0
 

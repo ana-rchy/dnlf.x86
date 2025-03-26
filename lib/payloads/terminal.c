@@ -1,6 +1,12 @@
 #include "terminal.h"
+#include "../defines.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <pthread.h>
+#if defined(IS_UNIX)
+    #include <unistd.h>
+#endif
 
 #define BUFFER_SIZE 200
 
@@ -8,25 +14,46 @@ char* unix_terminals[] = { "gnome-terminal", "konsole", "alacritty", "kitty", "b
 
 
 bool posix_command_exists(char* command) {
-    char buffer[80];
-    snprintf(buffer, 80, "which %s > /dev/null 2>&1", command);
+    char buffer[BUFFER_SIZE];
+    sprintf(buffer, "which %s > /dev/null 2>&1", command);
     
     return !system(buffer);
 }
 
 void run_command(char* command, char* args[]) {
-    char temp_buffer[BUFFER_SIZE];
-    char run_buffer[BUFFER_SIZE];
+    int args_count = -1;
+    while (args[++args_count] != NULL) {}
 
-    snprintf(run_buffer, BUFFER_SIZE, "%s", command);
+    char* all_args[args_count + 2];
+    all_args[0] = command;
 
-    int i = -1;
-    while (args != NULL && args[++i] != NULL) {
-        snprintf(temp_buffer, BUFFER_SIZE, "%s", run_buffer);
-        snprintf(run_buffer, BUFFER_SIZE, "%s %s", temp_buffer, args[i]);
+    for (int i = 1; i < args_count + 1; i++) {
+        all_args[i] = args[i - 1];
     }
 
-    system(run_buffer);
+    all_args[args_count + 1] = NULL;
+
+
+    #if defined(IS_UNIX)
+        pid_t process_id = fork();
+        
+        // child
+        if (process_id == 0) {
+            execvp(command, all_args);
+
+            perror("run_command execvp failed");
+            exit(EXIT_FAILURE);
+        }
+
+        // parent
+        if (process_id < 0) {
+            perror("run_command fork failed");
+            exit(EXIT_FAILURE);
+        }
+
+    #elif defined(IS_WINDOWS)
+
+    #endif
 }
 
 //////////////////////////////////////////////////////////////////
@@ -60,9 +87,9 @@ void run_first_valid_command(char* commands[], char* args[]) {
 //////////////////////////////////////////////////////////////////
 
 void open_posix_terminal(char* args[]) {
-    #if defined(__APPLE__) || defined(__MACH__) || defined(macintosh)
+    #if defined(IS_MAC)
 
-    #elif defined(__unix) || defined(__unix__)
+    #elif defined(IS_BASED_UNIX)
         if (getenv("TERM") != NULL && posix_command_exists("$TERM")) {
             run_command("$TERM", args);
         } else {
