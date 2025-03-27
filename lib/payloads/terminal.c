@@ -26,10 +26,14 @@ void run_command(char* command, char* args[]) {
 
     char* all_args[args_count + 2];
     all_args[0] = command;
+    printf("%s", command);
 
     for (int i = 1; i < args_count + 1; i++) {
         all_args[i] = args[i - 1];
+        printf(" %s", args[i - 1]);
     }
+
+    printf("\n");
 
     all_args[args_count + 1] = NULL;
 
@@ -91,7 +95,7 @@ void open_posix_terminal(char* args[]) {
 
     #elif defined(IS_BASED_UNIX)
         if (getenv("TERM") != NULL && posix_command_exists("$TERM")) {
-            run_command("$TERM", args);
+            run_command(getenv("TERM"), args);
         } else {
             run_first_valid_command(unix_terminals, args);
         }
