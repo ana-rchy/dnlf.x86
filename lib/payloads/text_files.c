@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <raylib.h>
+#if defined(IS_UNIX)
+    #include <unistd.h>
+#elif defined(IS_WINDOWS)
+    #include <Windows.h>
+#endif
 
 char* unix_text_editors[] = { "vim", "nvim", "emacs", "nano", "vi", "ed", NULL };
 
@@ -89,11 +94,9 @@ void open_text_file(char* path) {
 
 void sleep_ms(int milliseconds) {
     #if defined(IS_UNIX)
-        #include <unistd.h>
         usleep(milliseconds * 1000);
 
     #elif defined(IS_WINDOWS)
-        #include <Windows.h>
         Sleep(milliseconds);
 
     #endif
